@@ -1,0 +1,203 @@
+/* Custom Toggle Switch Styles */
+.toggle-checkbox {
+  right: 0;
+  z-index: 5;
+  opacity: 0;
+  transition: all 0.3s ease-in-out;
+}
+
+.toggle-label {
+  width: 100%;
+  transition: all 0.3s ease-in-out;
+}
+
+.toggle-checkbox:checked {
+  right: 0;
+  border-color: #a855f7;
+}
+
+.toggle-checkbox:checked + .toggle-label {
+  background-color: #a855f7;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c4b5fd;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a78bfa;
+}
+
+/* Progress Bar Animation */
+@keyframes progress {
+  0% {
+    width: 0;
+  }
+}
+
+.animate-progress {
+  animation: progress 1s ease-in-out;
+}
+
+/* Card Hover Effects */
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Task Priority Indicators */
+.priority-high {
+  @apply bg-red-100 text-red-800 border-red-200;
+}
+
+.priority-medium {
+  @apply bg-yellow-100 text-yellow-800 border-yellow-200;
+}
+
+.priority-low {
+  @apply bg-blue-100 text-blue-800 border-blue-200;
+}
+
+/* Task Status Indicators */
+.status-todo {
+  @apply bg-gray-100 text-gray-800 border-gray-200;
+}
+
+.status-in-progress {
+  @apply bg-blue-100 text-blue-800 border-blue-200;
+}
+
+.status-review {
+  @apply bg-yellow-100 text-yellow-800 border-yellow-200;
+}
+
+.status-completed {
+  @apply bg-green-100 text-green-800 border-green-200;
+}
+
+/* Pulse Animation for Notifications */
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.7);
+  }
+  
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(168, 85, 247, 0);
+  }
+  
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(168, 85, 247, 0);
+  }
+}
+
+.animate-pulse-custom {
+  animation: pulse 2s infinite;
+}
+
+/* Calendar Day Styles */
+.calendar-day {
+  min-height: 100px;
+  transition: all 0.2s ease;
+}
+
+.calendar-day:hover {
+  background-color: #f5f3ff;
+}
+
+.calendar-day.today {
+  background-color: #ede9fe;
+  font-weight: 600;
+}
+
+.calendar-day.selected {
+  border: 2px solid #a855f7;
+}
+
+.calendar-day.other-month {
+  opacity: 0.5;
+}
+
+/* Form Focus Effects */
+.input-focus-effect {
+  transition: border-color 0.2s ease;
+}
+
+.input-focus-effect:focus {
+  border-color: #a855f7;
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2);
+}
+
+/* Button Hover Effects */
+.btn-hover-slide {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.btn-hover-slide::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  background-color: rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  z-index: -1;
+}
+
+.btn-hover-slide:hover::after {
+  height: 100%;
+}
+
+/* Loading Skeleton Animation */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+/* Dark Mode Styles (for future implementation) */
+.dark-mode {
+  @apply bg-gray-900 text-white;
+}
+
+.dark-mode .card {
+  @apply bg-gray-800 border-gray-700;
+}
+
+.dark-mode .input {
+  @apply bg-gray-700 border-gray-600 text-white;
+}
+
+.dark-mode .btn-primary {
+  @apply bg-primary-dark hover:bg-primary;
+}
