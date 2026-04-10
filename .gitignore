@@ -5,3 +5,6 @@
 *.log
 *.tmp
 *.temp
+
+!/README.md
+!/TASK_MANAGER_BLUEPRINT.md
