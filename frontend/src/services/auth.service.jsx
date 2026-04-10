@@ -1,12 +1,12 @@
 
 import axios from 'axios';
-import { API_URL } from '../utils/constants';
+import { apiUrl } from '../utils/constants';
 
-const API_AUTH_URL = `${API_URL}/api/auth`;
+const apiAuthUrl = `${apiUrl}/api/auth`;
 
 class AuthService {
   async login(email, password) {
-    const response = await axios.post(`${API_AUTH_URL}/signin`, {
+    const response = await axios.post(`${apiAuthUrl}/login`, {
       email,
       password
     });
@@ -23,7 +23,7 @@ class AuthService {
   }
   
   async register(username, email, password) {
-    const response = await axios.post(`${API_AUTH_URL}/signup`, {
+    const response = await axios.post(`${apiAuthUrl}/register`, {
       username,
       email,
       password

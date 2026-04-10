@@ -1,29 +1,29 @@
-const STATUS_COMPLETED = 'completed';
-const STATUS_IN_PROGRESS = 'in-progress';
-const STATUS_REVIEW = 'review';
-const STATUS_TODO = 'todo';
-const PRIORITY_HIGH = 'high';
+const statusCompleted = 'completed';
+const statusInProgress = 'in-progress';
+const statusReview = 'review';
+const statusTodo = 'todo';
+const priorityHigh = 'high';
 
-const DAY_MS = 24 * 60 * 60 * 1000;
+const dayMs = 24 * 60 * 60 * 1000;
 
 const normalizeStatus = (status, completed) => {
-  if (completed === true) return STATUS_COMPLETED;
-  const normalized = String(status || STATUS_TODO).toLowerCase().trim();
-  if (normalized === 'in_progress' || normalized === 'inprogress') return STATUS_IN_PROGRESS;
+  if (completed === true) return statusCompleted;
+  const normalized = String(status || statusTodo).toLowerCase().trim();
+  if (normalized === 'in_progress' || normalized === 'inprogress') return statusInProgress;
   if (
-    normalized === STATUS_TODO ||
-    normalized === STATUS_IN_PROGRESS ||
-    normalized === STATUS_REVIEW ||
-    normalized === STATUS_COMPLETED
+    normalized === statusTodo ||
+    normalized === statusInProgress ||
+    normalized === statusReview ||
+    normalized === statusCompleted
   ) {
     return normalized;
   }
-  return STATUS_TODO;
+  return statusTodo;
 };
 
 const normalizePriority = (priority) => {
   const normalized = String(priority || '').toLowerCase().trim();
-  if (normalized === '3') return PRIORITY_HIGH;
+  if (normalized === '3') return priorityHigh;
   if (normalized === '2') return 'medium';
   if (normalized === '1') return 'low';
   if (normalized === 'high' || normalized === 'medium' || normalized === 'low') return normalized;
@@ -50,7 +50,7 @@ const isSameDay = (left, right) =>
 const buildOverviewMetrics = (tasks) => {
   const now = new Date();
   const todayStart = getStartOfDay(now);
-  const sevenDaysAgo = new Date(todayStart.getTime() - 6 * DAY_MS);
+  const sevenDaysAgo = new Date(todayStart.getTime() - 6 * dayMs);
   const safeTasks = Array.isArray(tasks) ? tasks : [];
 
   let dueToday = 0;
@@ -65,11 +65,11 @@ const buildOverviewMetrics = (tasks) => {
     const priority = normalizePriority(task.priority);
     const dueDate = parseDate(task.dueDate);
 
-    if (status === STATUS_COMPLETED) {
+    if (status === statusCompleted) {
       completedCount += 1;
     }
 
-    if (dueDate && status !== STATUS_COMPLETED) {
+    if (dueDate && status !== statusCompleted) {
       if (isSameDay(dueDate, now)) {
         dueToday += 1;
         todayTasks.push(task);
@@ -80,8 +80,8 @@ const buildOverviewMetrics = (tasks) => {
     }
 
     if (
-      status !== STATUS_COMPLETED &&
-      ((dueDate && getStartOfDay(dueDate) < todayStart) || priority === PRIORITY_HIGH)
+      status !== statusCompleted &&
+      ((dueDate && getStartOfDay(dueDate) < todayStart) || priority === priorityHigh)
     ) {
       needsAttention.push(task);
     }
@@ -242,7 +242,7 @@ const buildRulesTaskDraft = ({
   const now = new Date();
   const todayStart = getStartOfDay(now);
 
-  const incomplete = safeTasks.filter((task) => normalizeStatus(task.status, task.completed) !== STATUS_COMPLETED);
+  const incomplete = safeTasks.filter((task) => normalizeStatus(task.status, task.completed) !== statusCompleted);
 
   const overdueTasks = incomplete.filter((task) => {
     const due = parseDate(task.dueDate);
@@ -254,7 +254,7 @@ const buildRulesTaskDraft = ({
     return due && isSameDay(due, now);
   });
 
-  const highOpen = incomplete.filter((task) => normalizePriority(task.priority) === PRIORITY_HIGH);
+  const highOpen = incomplete.filter((task) => normalizePriority(task.priority) === priorityHigh);
 
   const due = new Date();
   due.setDate(due.getDate() + (defaultPriority === 'high' || overdueTasks.length ? 1 : 2));

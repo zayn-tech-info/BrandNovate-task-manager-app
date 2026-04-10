@@ -3,7 +3,7 @@ import Skeleton from '@mui/material/Skeleton';
 import Box from '@mui/material/Box';
 
 const KpiCardSkeleton = () => (
-  <div className="rounded-2xl border border-white/10 bg-[#111420] p-4">
+  <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-[#111420]">
     <div className="flex items-center gap-3">
       <Skeleton variant="circular" width={40} height={40} />
       <div className="min-w-0 flex-1">
@@ -15,11 +15,11 @@ const KpiCardSkeleton = () => (
 );
 
 const MiniListSkeleton = ({ rows = 3 }) => (
-  <div className="rounded-2xl border border-white/10 bg-[#111420] p-4">
+  <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-[#111420]">
     <Skeleton variant="text" width={140} height={20} />
     <div className="mt-3 space-y-2">
       {Array.from({ length: rows }, (_, i) => (
-        <div key={i} className="rounded-lg border border-white/5 bg-[#0d1018] px-3 py-2">
+        <div key={i} className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 dark:border-white/5 dark:bg-[#0d1018]">
           <Skeleton variant="text" width="90%" height={18} />
           <Skeleton variant="text" width="45%" height={14} sx={{ mt: 0.75 }} />
         </div>
@@ -29,11 +29,11 @@ const MiniListSkeleton = ({ rows = 3 }) => (
 );
 
 const ActivitySkeleton = () => (
-  <div className="rounded-2xl border border-white/10 bg-[#111420] p-4">
+  <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-[#111420]">
     <Skeleton variant="text" width={120} height={20} />
     <div className="mt-3 space-y-2">
       {Array.from({ length: 6 }, (_, i) => (
-        <div key={i} className="rounded-lg border border-white/5 bg-[#0d1018] px-3 py-2">
+        <div key={i} className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 dark:border-white/5 dark:bg-[#0d1018]">
           <Skeleton variant="text" width="85%" height={18} />
           <Skeleton variant="text" width="55%" height={12} sx={{ mt: 0.75 }} />
         </div>
@@ -64,7 +64,7 @@ const DashboardSkeleton = () => (
       <ActivitySkeleton />
     </div>
 
-    <div className="rounded-2xl border border-white/10 bg-[#111420] p-4">
+    <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-[#111420]">
       <Box className="mb-3 flex items-center justify-between">
         <Skeleton variant="text" width={200} height={22} />
         <Skeleton variant="text" width={56} height={16} />
@@ -72,7 +72,7 @@ const DashboardSkeleton = () => (
       <div className="grid grid-cols-7 gap-2">
         {[20, 32, 16, 28, 18, 24, 88].map((h, i) => (
           <div key={i} className="flex flex-col items-center gap-1">
-            <div className="flex h-24 w-full items-end rounded-md bg-[#0d1018] p-1">
+            <div className="flex h-24 w-full items-end rounded-md bg-slate-100 p-1 dark:bg-[#0d1018]">
               <Skeleton variant="rounded" sx={{ width: '100%', height: h, borderRadius: '4px' }} />
             </div>
             <Skeleton variant="text" width={28} height={12} />
@@ -81,7 +81,7 @@ const DashboardSkeleton = () => (
       </div>
     </div>
 
-    <div className="rounded-2xl border border-white/10 bg-[#111420] p-4">
+    <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-[#111420]">
       <Box className="mb-3 flex items-center justify-between">
         <Skeleton variant="text" width={120} height={22} />
         <Skeleton variant="rounded" width={72} height={22} sx={{ borderRadius: 9999 }} />
@@ -89,7 +89,7 @@ const DashboardSkeleton = () => (
       <Skeleton variant="text" width="95%" height={20} />
       <Skeleton variant="text" width="78%" height={20} sx={{ mt: 1 }} />
       <div className="mt-4 space-y-3">
-        <div className="rounded-lg border border-white/5 bg-[#0d1018] p-3">
+        <div className="rounded-lg border border-slate-100 bg-slate-50 p-3 dark:border-white/5 dark:bg-[#0d1018]">
           <Box className="flex items-start justify-between gap-3">
             <div className="min-w-0 flex-1">
               <Skeleton variant="text" width="70%" height={20} />

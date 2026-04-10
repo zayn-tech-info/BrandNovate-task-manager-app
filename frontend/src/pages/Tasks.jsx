@@ -306,8 +306,8 @@ const Tasks = () => {
     <div className="mx-auto w-full max-w-6xl space-y-6 py-2">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight text-white">Tasks</h1>
-          <p className="mt-1 text-sm text-gray-500">Track and complete work in one place.</p>
+          <h1 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">Tasks</h1>
+          <p className="mt-1 text-sm text-slate-600 dark:text-gray-500">Track and complete work in one place.</p>
         </div>
         <button
           type="button"
@@ -330,15 +330,15 @@ const Tasks = () => {
       />
 
       {selectedCount ? (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/10 bg-[#121726] px-4 py-3">
-          <p className="text-sm text-gray-300">
-            <span className="font-semibold text-white">{selectedCount}</span> selected
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 dark:border-white/10 dark:bg-[#121726]">
+          <p className="text-sm text-slate-700 dark:text-gray-300">
+            <span className="font-semibold text-slate-900 dark:text-white">{selectedCount}</span> selected
           </p>
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={handleToggleSelectedCompletion}
-              className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-xs font-medium text-gray-200 transition-colors hover:bg-white/[0.05]"
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 dark:border-white/10 dark:text-gray-200 dark:hover:bg-white/[0.05]"
             >
               <FiCheckSquare className="h-3.5 w-3.5" />
               Toggle complete
@@ -399,11 +399,11 @@ const Tasks = () => {
 
           {!activeTasks.length && !completedTasks.length ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
-              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-2xl border border-white/5 bg-white/4">
-                <FiCheckSquare className="text-gray-500" size={20} />
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-slate-100 dark:border-white/5 dark:bg-white/4">
+                <FiCheckSquare className="text-slate-500 dark:text-gray-500" size={20} />
               </div>
-              <p className="text-sm text-gray-500">No tasks yet</p>
-              <p className="mt-1 text-xs text-gray-600">Use New task to add your first one.</p>
+              <p className="text-sm text-slate-600 dark:text-gray-500">No tasks yet</p>
+              <p className="mt-1 text-xs text-slate-500 dark:text-gray-600">Use New task to add your first one.</p>
             </div>
           ) : null}
         </div>

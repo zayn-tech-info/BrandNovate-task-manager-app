@@ -3,7 +3,7 @@ import Skeleton from '@mui/material/Skeleton';
 import TaskTableRowSkeleton from './TaskTableRowSkeleton';
 
 const tableHead = (
-  <thead className="border-b border-white/5 bg-[#121726] text-[11px] uppercase tracking-wider text-gray-500">
+  <thead className="border-b border-slate-200 bg-slate-50 text-[11px] uppercase tracking-wider text-slate-500 dark:border-white/5 dark:bg-[#121726] dark:text-gray-500">
     <tr>
       <th className="w-12 px-4 py-3" aria-hidden />
       <th className="px-4 py-3">Title</th>
@@ -19,7 +19,7 @@ const tableHead = (
 const TaskSectionSkeleton = ({ titleWidth, rowCount = 4 }) => (
   <section className="space-y-3">
     <Skeleton variant="text" width={titleWidth} height={18} />
-    <div className="overflow-hidden rounded-2xl border border-white/5 bg-[#0f1320]">
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-white/5 dark:bg-[#0f1320]">
       <div className="overflow-x-auto">
         <table className="min-w-full text-left text-sm">
           {tableHead}

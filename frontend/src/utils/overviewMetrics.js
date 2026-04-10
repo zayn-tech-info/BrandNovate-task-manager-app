@@ -1,29 +1,29 @@
-const STATUS_COMPLETED = 'completed';
-const STATUS_IN_PROGRESS = 'in-progress';
-const STATUS_REVIEW = 'review';
-const STATUS_TODO = 'todo';
-const PRIORITY_HIGH = 'high';
+const statusCompleted = 'completed';
+const statusInProgress = 'in-progress';
+const statusReview = 'review';
+const statusTodo = 'todo';
+const priorityHigh = 'high';
 
-const DAY_MS = 24 * 60 * 60 * 1000;
+const dayMs = 24 * 60 * 60 * 1000;
 
 const normalizeStatus = (status, completed) => {
-  if (completed === true) return STATUS_COMPLETED;
-  const normalized = String(status || STATUS_TODO).toLowerCase().trim();
-  if (normalized === 'in_progress' || normalized === 'inprogress') return STATUS_IN_PROGRESS;
+  if (completed === true) return statusCompleted;
+  const normalized = String(status || statusTodo).toLowerCase().trim();
+  if (normalized === 'in_progress' || normalized === 'inprogress') return statusInProgress;
   if (
-    normalized === STATUS_TODO ||
-    normalized === STATUS_IN_PROGRESS ||
-    normalized === STATUS_REVIEW ||
-    normalized === STATUS_COMPLETED
+    normalized === statusTodo ||
+    normalized === statusInProgress ||
+    normalized === statusReview ||
+    normalized === statusCompleted
   ) {
     return normalized;
   }
-  return STATUS_TODO;
+  return statusTodo;
 };
 
 const normalizePriority = (priority) => {
   const normalized = String(priority || '').toLowerCase().trim();
-  if (normalized === 'high') return PRIORITY_HIGH;
+  if (normalized === 'high') return priorityHigh;
   if (normalized === 'medium') return 'medium';
   if (normalized === 'low') return 'low';
   return 'medium';
@@ -48,20 +48,20 @@ const parseDate = (value) => {
 
 const isCompletedTask = (task) => {
   if (!task || typeof task !== 'object') return false;
-  return normalizeStatus(task.status, task.completed) === STATUS_COMPLETED;
+  return normalizeStatus(task.status, task.completed) === statusCompleted;
 };
 
 export const buildOverviewMetrics = (tasks) => {
   const now = new Date();
   const todayStart = getStartOfDay(now);
-  const sevenDaysAgo = new Date(todayStart.getTime() - 6 * DAY_MS);
+  const sevenDaysAgo = new Date(todayStart.getTime() - 6 * dayMs);
   const safeTasks = Array.isArray(tasks) ? tasks : [];
 
   const statusDistribution = {
-    [STATUS_TODO]: 0,
-    [STATUS_IN_PROGRESS]: 0,
-    [STATUS_REVIEW]: 0,
-    [STATUS_COMPLETED]: 0
+    [statusTodo]: 0,
+    [statusInProgress]: 0,
+    [statusReview]: 0,
+    [statusCompleted]: 0
   };
 
   let dueToday = 0;
@@ -83,7 +83,7 @@ export const buildOverviewMetrics = (tasks) => {
 
     statusDistribution[status] += 1;
 
-    if (status === STATUS_COMPLETED) {
+    if (status === statusCompleted) {
       completedCount += 1;
       const completionDate = updatedAt || createdAt;
       if (completionDate && completionDate >= sevenDaysAgo) {
@@ -91,7 +91,7 @@ export const buildOverviewMetrics = (tasks) => {
       }
     }
 
-    if (dueDate && status !== STATUS_COMPLETED) {
+    if (dueDate && status !== statusCompleted) {
       if (isSameDay(dueDate, now)) {
         dueToday += 1;
         todayTasks.push(task);
@@ -102,8 +102,8 @@ export const buildOverviewMetrics = (tasks) => {
     }
 
     if (
-      status !== STATUS_COMPLETED &&
-      ((dueDate && getStartOfDay(dueDate) < todayStart) || priority === PRIORITY_HIGH)
+      status !== statusCompleted &&
+      ((dueDate && getStartOfDay(dueDate) < todayStart) || priority === priorityHigh)
     ) {
       needsAttention.push(task);
     }
@@ -116,7 +116,7 @@ export const buildOverviewMetrics = (tasks) => {
       });
     }
 
-    if (status === STATUS_COMPLETED && updatedAt && updatedAt >= sevenDaysAgo) {
+    if (status === statusCompleted && updatedAt && updatedAt >= sevenDaysAgo) {
       recentActivity.push({
         type: 'completed',
         date: updatedAt,
@@ -145,7 +145,7 @@ export const buildOverviewMetrics = (tasks) => {
   const completionRate = safeTasks.length ? Math.round((completedCount / safeTasks.length) * 100) : 0;
 
   const completionTrend = Array.from({ length: 7 }, (_, index) => {
-    const day = new Date(sevenDaysAgo.getTime() + index * DAY_MS);
+    const day = new Date(sevenDaysAgo.getTime() + index * dayMs);
     const label = day.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
     return {
       date: day.toISOString().slice(0, 10),
@@ -159,7 +159,7 @@ export const buildOverviewMetrics = (tasks) => {
     if (!isCompletedTask(task)) return;
     const when = parseDate(task.updatedAt || task.createdAt);
     if (!when || when < sevenDaysAgo) return;
-    const idx = Math.floor((getStartOfDay(when).getTime() - sevenDaysAgo.getTime()) / DAY_MS);
+    const idx = Math.floor((getStartOfDay(when).getTime() - sevenDaysAgo.getTime()) / dayMs);
     if (idx >= 0 && idx < completionTrend.length) {
       completionTrend[idx].completed += 1;
     }

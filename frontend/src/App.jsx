@@ -1,5 +1,6 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { ImSpinner2 } from 'react-icons/im';
 import { useAuthStore as useAuth } from './stores/auth.store';
 
 import DashboardLayout from './layouts/DashboardLayout';
@@ -11,20 +12,27 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import { AppShellSkeleton } from './components/skeletons';
 
-const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth();
+const AuthBootstrapSpinner = () => (
+  <div className="flex min-h-[220px] items-center justify-center p-10" role="status" aria-live="polite">
+    <ImSpinner2 className="h-8 w-8 animate-spin text-blue-400" aria-hidden />
+    <span className="sr-only">Checking session…</span>
+  </div>
+);
 
-  if (loading) {
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, initializing } = useAuth();
+
+  if (initializing) {
     return <AppShellSkeleton />;
   }
   return isAuthenticated ? children : <Navigate to="/login" />;
 };
 
 const PublicRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, initializing } = useAuth();
 
-  if (loading) {
-    return <AppShellSkeleton />;
+  if (initializing) {
+    return <AuthBootstrapSpinner />;
   }
 
   return !isAuthenticated ? children : <Navigate to="/dashboard" />;

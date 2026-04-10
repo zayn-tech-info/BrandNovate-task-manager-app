@@ -1,9 +1,9 @@
 const Task = require('../models/task.model');
 
-const TASK_STATUSES = Task.taskStatuses;
-const TASK_PRIORITIES = Task.taskPriorities;
+const allowedStatuses = Task.taskStatuses;
+const allowedPriorities = Task.taskPriorities;
 
-const DAY_MS = 24 * 60 * 60 * 1000;
+const dayMs = 24 * 60 * 60 * 1000;
 
 const getLocalDayBoundsUtc = (offsetMinutes) => {
   const now = Date.now();
@@ -12,15 +12,15 @@ const getLocalDayBoundsUtc = (offsetMinutes) => {
   const m = shifted.getUTCMonth();
   const d = shifted.getUTCDate();
   const startUtc = Date.UTC(y, m, d, 0, 0, 0, 0) + offsetMinutes * 60 * 1000;
-  return { start: new Date(startUtc), end: new Date(startUtc + DAY_MS) };
+  return { start: new Date(startUtc), end: new Date(startUtc + dayMs) };
 };
 
 const parseStatus = (status, hasField = true) => {
   if (!hasField) return { hasValue: false, value: undefined };
   if (status == null || status === '') return { hasValue: true, value: undefined };
   const normalized = String(status).toLowerCase().trim();
-  if (!TASK_STATUSES.includes(normalized)) {
-    return { hasValue: true, error: `Invalid status. Allowed values: ${TASK_STATUSES.join(', ')}.` };
+  if (!allowedStatuses.includes(normalized)) {
+    return { hasValue: true, error: `Invalid status. Allowed values: ${allowedStatuses.join(', ')}.` };
   }
   return { hasValue: true, value: normalized };
 };
@@ -29,8 +29,8 @@ const parsePriority = (priority, hasField = true) => {
   if (!hasField) return { hasValue: false, value: undefined };
   if (priority == null || priority === '') return { hasValue: true, value: undefined };
   const normalized = String(priority).toLowerCase().trim();
-  if (!TASK_PRIORITIES.includes(normalized)) {
-    return { hasValue: true, error: `Invalid priority. Allowed values: ${TASK_PRIORITIES.join(', ')}.` };
+  if (!allowedPriorities.includes(normalized)) {
+    return { hasValue: true, error: `Invalid priority. Allowed values: ${allowedPriorities.join(', ')}.` };
   }
   return { hasValue: true, value: normalized };
 };
@@ -92,7 +92,7 @@ const getTasksForToday = async (req, res) => {
     if (raw === undefined || raw === '') {
       start = new Date();
       start.setHours(0, 0, 0, 0);
-      end = new Date(start.getTime() + DAY_MS);
+      end = new Date(start.getTime() + dayMs);
     } else {
       const n = Number(raw);
       if (!Number.isFinite(n) || !Number.isInteger(n) || n < -840 || n > 840) {

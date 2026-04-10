@@ -1,9 +1,5 @@
 const jwt = require('jsonwebtoken');
 
-/**
- * jsonwebtoken: numeric expiresIn = seconds; string = span like "24h", "7d".
- * Env JWT_EXPIRATION=86400 → 24 hours in seconds.
- */
 function parseExpiresIn() {
   const raw = process.env.JWT_EXPIRATION;
   if (raw == null || raw === '') return '24h';

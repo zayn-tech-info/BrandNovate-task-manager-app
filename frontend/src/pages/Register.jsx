@@ -81,19 +81,19 @@ const Register = () => {
 
   return (
     <div className="p-6 md:p-8">
-      <h2 className="mb-6 text-center text-2xl font-semibold tracking-tight text-white">
+      <h2 className="mb-6 text-center text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
         Create an Account
       </h2>
 
       {errors.form && (
-        <div className="mb-4 rounded-lg border border-red-500/30 bg-red-950/40 p-3 text-sm text-red-200">
+        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800 dark:border-red-500/30 dark:bg-red-950/40 dark:text-red-200">
           {errors.form}
         </div>
       )}
 
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label className="mb-2 block text-sm font-medium text-gray-400" htmlFor="username">
+          <label className="mb-2 block text-sm font-medium text-slate-600 dark:text-gray-400" htmlFor="username">
             Username
           </label>
           <div className="relative">
@@ -113,7 +113,7 @@ const Register = () => {
         </div>
 
         <div className="mb-4">
-          <label className="mb-2 block text-sm font-medium text-gray-400" htmlFor="email">
+          <label className="mb-2 block text-sm font-medium text-slate-600 dark:text-gray-400" htmlFor="email">
             Email Address
           </label>
           <div className="relative">
@@ -133,7 +133,7 @@ const Register = () => {
         </div>
 
         <div className="mb-4">
-          <label className="mb-2 block text-sm font-medium text-gray-400" htmlFor="password">
+          <label className="mb-2 block text-sm font-medium text-slate-600 dark:text-gray-400" htmlFor="password">
             Password
           </label>
           <div className="relative">
@@ -165,7 +165,7 @@ const Register = () => {
         </div>
 
         <div className="mb-6">
-          <label className="mb-2 block text-sm font-medium text-gray-400" htmlFor="confirmPassword">
+          <label className="mb-2 block text-sm font-medium text-slate-600 dark:text-gray-400" htmlFor="confirmPassword">
             Confirm Password
           </label>
           <div className="relative">
@@ -211,9 +211,9 @@ const Register = () => {
       </form>
 
       <div className="mt-6 text-center">
-        <p className="text-sm text-gray-400">
+        <p className="text-sm text-slate-600 dark:text-gray-400">
           Already have an account?{' '}
-          <Link to="/login" className="font-medium text-blue-400 hover:text-blue-300">
+          <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
             Login
           </Link>
         </p>
