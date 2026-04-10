@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { FiAlertTriangle, FiInfo, FiX } from 'react-icons/fi';
 
 const iconMap = {
@@ -17,6 +17,8 @@ const ConfirmModal = ({
   onCancel,
   showCancel = true
 }) => {
+  const dialogRef = useRef(null);
+
   useEffect(() => {
     if (!open) return undefined;
 
@@ -29,6 +31,49 @@ const ConfirmModal = ({
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [open, onCancel]);
+
+  useEffect(() => {
+    if (!open || !dialogRef.current) return undefined;
+
+    const root = dialogRef.current;
+    const previouslyFocused = document.activeElement;
+    const selector =
+      'button:not([disabled]), [href], input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+    const getFocusable = () => Array.from(root.querySelectorAll(selector));
+
+    const focusables = getFocusable();
+    (focusables[0] || root).focus();
+
+    const onKeyDown = (event) => {
+      if (event.key !== 'Tab') return;
+      const nodes = getFocusable();
+      if (nodes.length === 0) return;
+      const first = nodes[0];
+      const last = nodes[nodes.length - 1];
+      if (event.shiftKey) {
+        if (document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        }
+      } else if (document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    root.addEventListener('keydown', onKeyDown);
+    return () => {
+      root.removeEventListener('keydown', onKeyDown);
+      if (previouslyFocused && typeof previouslyFocused.focus === 'function') {
+        try {
+          previouslyFocused.focus();
+        } catch {
+          /* ignore */
+        }
+      }
+    };
+  }, [open]);
 
   if (!open) return null;
 
@@ -46,10 +91,12 @@ const ConfirmModal = ({
       />
 
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="confirm-modal-title"
-        className="relative z-10 w-full max-w-md rounded-2xl border border-white/10 bg-[#101523] p-6 shadow-2xl"
+        tabIndex={-1}
+        className="relative z-10 w-full max-w-md rounded-2xl border border-white/10 bg-[#101523] p-6 shadow-2xl outline-none"
       >
         <div className="mb-4 flex items-start justify-between gap-3">
           <div className="flex items-center gap-2">

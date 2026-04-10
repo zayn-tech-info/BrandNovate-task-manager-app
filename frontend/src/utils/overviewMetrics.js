@@ -23,10 +23,9 @@ const normalizeStatus = (status, completed) => {
 
 const normalizePriority = (priority) => {
   const normalized = String(priority || '').toLowerCase().trim();
-  if (normalized === '3') return PRIORITY_HIGH;
-  if (normalized === '2') return 'medium';
-  if (normalized === '1') return 'low';
-  if (normalized === 'high' || normalized === 'medium' || normalized === 'low') return normalized;
+  if (normalized === 'high') return PRIORITY_HIGH;
+  if (normalized === 'medium') return 'medium';
+  if (normalized === 'low') return 'low';
   return 'medium';
 };
 
@@ -47,7 +46,10 @@ const parseDate = (value) => {
   return Number.isNaN(parsed.getTime()) ? null : parsed;
 };
 
-const isCompletedTask = (task) => normalizeStatus(task.status, task.completed) === STATUS_COMPLETED;
+const isCompletedTask = (task) => {
+  if (!task || typeof task !== 'object') return false;
+  return normalizeStatus(task.status, task.completed) === STATUS_COMPLETED;
+};
 
 export const buildOverviewMetrics = (tasks) => {
   const now = new Date();
@@ -72,6 +74,7 @@ export const buildOverviewMetrics = (tasks) => {
   const recentActivity = [];
 
   safeTasks.forEach((task) => {
+    if (!task || typeof task !== 'object') return;
     const status = normalizeStatus(task.status, task.completed);
     const priority = normalizePriority(task.priority);
     const dueDate = parseDate(task.dueDate);
@@ -152,6 +155,7 @@ export const buildOverviewMetrics = (tasks) => {
   });
 
   safeTasks.forEach((task) => {
+    if (!task || typeof task !== 'object') return;
     if (!isCompletedTask(task)) return;
     const when = parseDate(task.updatedAt || task.createdAt);
     if (!when || when < sevenDaysAgo) return;
@@ -179,8 +183,19 @@ export const buildOverviewMetrics = (tasks) => {
   };
 };
 
-export const buildDeterministicInsights = (overview) => {
-  const { kpis, lists } = overview;
+export const buildDeterministicInsights = (overview, generatedAt) => {
+  const o = overview && typeof overview === 'object' ? overview : {};
+  const kpisRaw = o.kpis && typeof o.kpis === 'object' ? o.kpis : {};
+  const listsRaw = o.lists && typeof o.lists === 'object' ? o.lists : {};
+  const kpis = {
+    total: Number(kpisRaw.total) || 0,
+    dueToday: Number(kpisRaw.dueToday) || 0,
+    overdue: Number(kpisRaw.overdue) || 0,
+    completionRate: Number(kpisRaw.completionRate) || 0
+  };
+  const lists = {
+    needsAttention: Array.isArray(listsRaw.needsAttention) ? listsRaw.needsAttention : []
+  };
   const suggestions = [];
 
   if (kpis.overdue > 0) {
@@ -219,7 +234,7 @@ export const buildDeterministicInsights = (overview) => {
   return {
     summary: `You have ${kpis.total} total task${kpis.total !== 1 ? 's' : ''} and ${kpis.completionRate}% completion rate.`,
     suggestions,
-    generatedAt: new Date().toISOString(),
+    generatedAt: typeof generatedAt === 'string' ? generatedAt : '1970-01-01T00:00:00.000Z',
     source: 'rules'
   };
 };

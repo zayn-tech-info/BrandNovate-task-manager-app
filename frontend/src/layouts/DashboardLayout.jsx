@@ -38,9 +38,9 @@ const DashboardLayout = () => {
   return (
     <div className="flex h-screen bg-[#0d0f14]">
       <aside
-        className={`fixed inset-y-0 left-0 z-30 w-64 transform border-r border-white/5 bg-[#0a0b0f] transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
+        className={`fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-white/5 bg-[#0a0b0f] transition-transform duration-300 ease-in-out lg:static lg:inset-0 lg:flex ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } ${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'} hidden flex-col lg:flex`}
+        }`}
       >
         <div className="flex h-16 items-center justify-center border-b border-white/5">
           <Link to="/tasks" className="text-lg font-semibold text-white">

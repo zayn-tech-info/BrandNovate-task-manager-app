@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore as useAuth } from '../stores/auth.store';
-import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { FiMail, FiLock, FiEye, FiEyeOff } from 'react-icons/fi';
+import { ImSpinner2 } from 'react-icons/im';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -72,7 +73,7 @@ const Login = () => {
           </label>
           <div className="relative">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-              <Mail className="h-4 w-4 text-gray-600" strokeWidth={2} />
+              <FiMail className="h-4 w-4 text-gray-600" />
             </div>
             <input
               id="email"
@@ -87,20 +88,14 @@ const Login = () => {
         </div>
 
         <div className="mb-6">
-          <div className="mb-2 flex items-center justify-between">
+          <div className="mb-2">
             <label className="block text-sm font-medium text-gray-400" htmlFor="password">
               Password
             </label>
-            <Link
-              to="/forgot-password"
-              className="text-sm font-medium text-blue-400 hover:text-blue-300"
-            >
-              Forgot password?
-            </Link>
           </div>
           <div className="relative">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-              <Lock className="h-4 w-4 text-gray-600" strokeWidth={2} />
+              <FiLock className="h-4 w-4 text-gray-600" />
             </div>
             <input
               id="password"
@@ -117,9 +112,9 @@ const Login = () => {
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? (
-                <EyeOff className="h-4 w-4 text-gray-600 hover:text-gray-400" strokeWidth={2} />
+                <FiEyeOff className="h-4 w-4 text-gray-600 hover:text-gray-400" />
               ) : (
-                <Eye className="h-4 w-4 text-gray-600 hover:text-gray-400" strokeWidth={2} />
+                <FiEye className="h-4 w-4 text-gray-600 hover:text-gray-400" />
               )}
             </button>
           </div>
@@ -129,7 +124,7 @@ const Login = () => {
         <button type="submit" className="btn btn-primary w-full py-2.5" disabled={isSubmitting}>
           {isSubmitting ? (
             <span className="flex items-center justify-center">
-              <Loader2 className="-ml-1 mr-2 h-4 w-4 animate-spin text-white" strokeWidth={2} />
+              <ImSpinner2 className="-ml-1 mr-2 h-4 w-4 animate-spin text-white" />
               Logging in...
             </span>
           ) : (

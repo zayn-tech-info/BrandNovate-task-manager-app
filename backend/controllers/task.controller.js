@@ -1,7 +1,19 @@
 const Task = require('../models/task.model');
 
-const TASK_STATUSES = ['todo', 'in-progress', 'review', 'completed'];
-const TASK_PRIORITIES = ['low', 'medium', 'high'];
+const TASK_STATUSES = Task.taskStatuses;
+const TASK_PRIORITIES = Task.taskPriorities;
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+const getLocalDayBoundsUtc = (offsetMinutes) => {
+  const now = Date.now();
+  const shifted = new Date(now - offsetMinutes * 60 * 1000);
+  const y = shifted.getUTCFullYear();
+  const m = shifted.getUTCMonth();
+  const d = shifted.getUTCDate();
+  const startUtc = Date.UTC(y, m, d, 0, 0, 0, 0) + offsetMinutes * 60 * 1000;
+  return { start: new Date(startUtc), end: new Date(startUtc + DAY_MS) };
+};
 
 const parseStatus = (status, hasField = true) => {
   if (!hasField) return { hasValue: false, value: undefined };
@@ -73,16 +85,29 @@ const getAllTasks = async (req, res) => {
 
 const getTasksForToday = async (req, res) => {
   try {
-    const start = new Date();
-    start.setHours(0, 0, 0, 0);
-    const end = new Date(start);
-    end.setDate(end.getDate() + 1);
+    let start;
+    let end;
+    const raw = req.query.timezoneOffset;
+
+    if (raw === undefined || raw === '') {
+      start = new Date();
+      start.setHours(0, 0, 0, 0);
+      end = new Date(start.getTime() + DAY_MS);
+    } else {
+      const n = Number(raw);
+      if (!Number.isFinite(n) || !Number.isInteger(n) || n < -840 || n > 840) {
+        return res.status(400).json({
+          message:
+            'Invalid timezoneOffset. Send an integer from -840 to 840 (same convention as Date.prototype.getTimezoneOffset()).'
+        });
+      }
+      ({ start, end } = getLocalDayBoundsUtc(n));
+    }
 
     const tasks = await Task.find({
       user: req.userId,
       dueDate: { $gte: start, $lt: end }
-    })
-      .sort({ dueDate: 1 });
+    }).sort({ dueDate: 1 });
 
     return res.status(200).json(tasks);
   } catch (error) {

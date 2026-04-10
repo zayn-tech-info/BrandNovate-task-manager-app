@@ -36,8 +36,9 @@ Anything outside this list is non-blocking for Day 1.
 - `status` (`todo` | `in-progress` | `review` | `completed`)
 - `priority` (`low` | `medium` | `high`)
 - `dueDate` (date, optional)
-- `category` (string, optional, defaults to `Other`)
 - `user` (ObjectId ref User, required)
+
+Day 1 acceptance and tests should rely only on the fields above. **FUTURE:** `category` (string, optional, defaults to `Other`) may appear in the schema or API later but is not part of the Day 1 core flow.
 
 ## Minimal API Contract
 

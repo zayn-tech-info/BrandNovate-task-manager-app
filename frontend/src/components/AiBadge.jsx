@@ -23,13 +23,13 @@ const AiBadge = ({ task }) => {
     );
   }
 
-  const priority = formatPriority(task.priority);
+  const priorityLabel = formatPriority(task.priority);
 
   return (
     <span
-      className={`inline-flex rounded-md px-2 py-0.5 text-[11px] font-medium ${getPriorityClasses(priority)}`}
+      className={`inline-flex rounded-md px-2 py-0.5 text-[11px] font-medium ${getPriorityClasses(task.priority)}`}
     >
-      {priority}
+      {priorityLabel}
     </span>
   );
 };

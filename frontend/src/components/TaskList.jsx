@@ -49,9 +49,9 @@ const formatStatusLabel = (status) =>
 
 const normalizePriority = (priority) => {
   const rawPriority = String(priority ?? '').toLowerCase().trim();
-  if (rawPriority === '3' || rawPriority === 'high') return 'high';
-  if (rawPriority === '2' || rawPriority === 'medium') return 'medium';
-  if (rawPriority === '1' || rawPriority === 'low') return 'low';
+  if (rawPriority === 'high') return 'high';
+  if (rawPriority === 'medium') return 'medium';
+  if (rawPriority === 'low') return 'low';
   return 'medium';
 };
 

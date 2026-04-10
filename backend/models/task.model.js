@@ -65,4 +65,7 @@ const taskSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model('Task', taskSchema);
+const TaskModel = mongoose.model('Task', taskSchema);
+TaskModel.taskStatuses = taskStatuses;
+TaskModel.taskPriorities = taskPriorities;
+module.exports = TaskModel;

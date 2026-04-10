@@ -9,6 +9,8 @@
 
   body {
     @apply bg-[#0d0f14] font-sans text-white antialiased;
+    scrollbar-width: thin;
+    scrollbar-color: #374151 #0d0f14;
   }
 }
 
@@ -16,19 +18,15 @@
   .btn {
     @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/40;
   }
-
   .btn-primary {
     @apply bg-blue-600 font-semibold text-white transition-colors hover:bg-blue-500;
   }
-
   .btn-secondary {
     @apply border border-gray-800 bg-[#161926] text-gray-300 hover:bg-[#111420] border-white/5;
   }
-
   .card {
     @apply rounded-xl border border-white/5 bg-[#111420] p-4;
   }
-
   .input {
     @apply w-full rounded-lg border border-gray-800 bg-[#161926] px-3 py-2 text-sm text-white placeholder:text-gray-600 focus:border-blue-500/50 focus:outline-none focus:ring-2 focus:ring-blue-500/40;
   }
@@ -39,8 +37,11 @@
     0% {
       width: 0;
     }
-  }
 
+    100% {
+      width: 100%;
+    }
+  }
   .animate-progress {
     animation: progress 1s ease-in-out;
   }

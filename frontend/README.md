@@ -39,6 +39,7 @@ frontend/
 ## Technologies Used
 
 - **React**: Frontend library for building user interfaces
+- **Vite**: Dev server and production build tooling
 - **React Router**: For navigation and routing
 - **Tailwind CSS**: Utility-first CSS framework
 - **Axios**: For API requests
@@ -57,41 +58,52 @@ frontend/
 
 1. Clone the repository
 2. Navigate to the frontend directory:
-   ```
-   cd frontend
-   ```
+
+```bash
+cd frontend
+```
+
 3. Install dependencies:
-   ```
-   npm install
-   ```
-   or
-   ```
-   yarn install
-   ```
+
+```bash
+npm install
+```
+
+or
+
+```bash
+yarn install
+```
 
 ### Running the Application
 
-1. Start the development server:
-   ```
-   npm start
-   ```
-   or
-   ```
-   yarn start
-   ```
-2. Open your browser and navigate to `http://localhost:3000`
+1. Start the Vite development server:
+
+```bash
+npm run dev
+```
+
+or
+
+```bash
+yarn dev
+```
+
+2. Open your browser and navigate to `http://localhost:5173` (Vite’s default dev URL).
 
 ### Building for Production
 
-```
+```bash
 npm run build
 ```
+
 or
-```
+
+```bash
 yarn build
 ```
 
-This will create an optimized production build in the `build` folder.
+This will create an optimized production build in the `dist` folder (Vite’s default output directory).
 
 ## Connecting to the Backend
 
@@ -109,7 +121,7 @@ These colors can be customized in the `tailwind.config.js` file.
 
 ## Browser Support
 
-The application supports all modern browsers, including:
+This application supports all modern browsers, including:
 
 - Chrome (latest)
 - Firefox (latest)

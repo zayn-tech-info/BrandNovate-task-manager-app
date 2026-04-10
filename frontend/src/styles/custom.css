@@ -25,6 +25,9 @@
   0% {
     width: 0;
   }
+  100% {
+    width: 100%;
+  }
 }
 
 .animate-progress {
@@ -77,27 +80,6 @@
   border: 1px solid #1f5b35;
   background-color: #11261a;
   color: #73d79f;
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.5);
-  }
-
-  70% {
-    transform: scale(1);
-    box-shadow: 0 0 0 10px rgba(37, 99, 235, 0);
-  }
-
-  100% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
-  }
-}
-
-.animate-pulse-custom {
-  animation: pulse 2s infinite;
 }
 
 .calendar-day {

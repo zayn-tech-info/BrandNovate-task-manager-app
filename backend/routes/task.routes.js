@@ -1,5 +1,5 @@
 const express = require('express');
-const { verifyToken } = require('../middleware/auth.middelware');
+const { verifyToken } = require('../middleware/auth.middleware');
 const {
   getAllTasks,
   getTasksForToday,

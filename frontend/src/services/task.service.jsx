@@ -69,7 +69,9 @@ class TaskService {
   }
   
   async getTasksForToday() {
+    const timezoneOffset = new Date().getTimezoneOffset();
     return await axios.get(`${API_TASKS_URL}/today`, {
+      params: { timezoneOffset },
       headers: authService.getAuthHeader()
     });
   }

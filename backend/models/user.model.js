@@ -30,12 +30,7 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: [true, 'Password is required.'],
-      minlength: [8, 'Password must be at least 8 characters.'],
-      maxlength: [30, 'Password must be less than 30 characters.'],
-      validate: {
-        validator: (value) => /\d/.test(String(value || '')) && /[A-Za-z]/.test(String(value || '')),
-        message: 'Password must include at least one letter and one number.'
-      }
+      select: false
     }
   },
   { timestamps: true }

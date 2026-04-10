@@ -54,8 +54,8 @@ backend/: Contains the Node.js/Express backend API
     
     Clone the repository:
 
-    https://github.com/MuntasirAraf14/task_manager_app.git
-    cd task_manager_app
+    https://github.com/zayn-tech-info/BrandNovate-task-manager-app.git
+    cd BrandNovate-task-manager-app
 
     Navigate to the backend folder:
 
@@ -69,7 +69,7 @@ backend/: Contains the Node.js/Express backend API
 
         PORT=5000
 
-        MONGO_URI=your_mongodb_connection_string
+        DATABASE_URI=your_mongodb_connection_string
 
         JWT_SECRET=your_jwt_secret
 
@@ -85,12 +85,12 @@ backend/: Contains the Node.js/Express backend API
 
         npm install
 
-    Start the React development server:
+    Start the frontend (Vite) development server:
 
-        npm start
+        npm run dev
 
     The backend will run on http://localhost:5000.
 
-    The frontend will run on http://localhost:3000.
+    The frontend dev server defaults to http://localhost:5173.
 
-    Open the browser and go to http://localhost:3000 to access the application.
+    Open the browser and go to http://localhost:5173 to access the application.

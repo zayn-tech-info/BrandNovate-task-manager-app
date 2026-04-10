@@ -1,21 +1,22 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { FiCheckSquare, FiPlus, FiTrash2 } from 'react-icons/fi';
 import CreateTaskModal from '../components/CreateTaskModal';
+import TaskViewModal from '../components/TaskViewModal';
 import ConfirmModal from '../components/ConfirmModal';
 import TaskList from '../components/TaskList';
 import FilterBar from '../components/FilterBar';
 import taskService from '../services/task.service';
+import { TasksPageSkeleton } from '../components/skeletons';
 
 const Tasks = () => {
-  const navigate = useNavigate();
   const [tasks, setTasks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [taskModalMode, setTaskModalMode] = useState('create');
   const [editingTask, setEditingTask] = useState(null);
+  const [viewingTask, setViewingTask] = useState(null);
   const [priorityFilter, setPriorityFilter] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
   const [hideCompleted, setHideCompleted] = useState(false);
@@ -156,8 +157,8 @@ const Tasks = () => {
   };
 
   const handleViewTask = (task) => {
-    if (!task?._id) return;
-    navigate(`/tasks/${task._id}`);
+    if (!task?._id && !task?.id) return;
+    setViewingTask(task);
   };
 
   const filteredTasks = useMemo(() => {
@@ -248,16 +249,42 @@ const Tasks = () => {
   const handleToggleSelectedCompletion = async () => {
     if (!selectedTasks.length) return;
     try {
-      const responseList = await Promise.all(
+      const results = await Promise.allSettled(
         selectedTasks.map((task) => {
           const done = task.completed === true || task.status === 'completed';
           return done ? taskService.markTaskAsIncomplete(task._id) : taskService.markTaskAsCompleted(task._id);
         })
       );
-      const updates = new Map(responseList.map((response) => [response.data._id, response.data]));
-      setTasks((prev) => prev.map((task) => updates.get(task._id) || task));
-      setSelectedTaskIds(new Set());
-      toast.success('Selected tasks updated');
+
+      const updates = new Map();
+      const succeededIds = [];
+      results.forEach((result) => {
+        if (result.status === 'fulfilled' && result.value?.data?._id) {
+          const updated = result.value.data;
+          updates.set(updated._id, updated);
+          succeededIds.push(updated._id);
+        }
+      });
+
+      if (updates.size) {
+        setTasks((prev) => prev.map((task) => updates.get(task._id) || task));
+      }
+
+      setSelectedTaskIds((prev) => {
+        if (!succeededIds.length) return prev;
+        const next = new Set(prev);
+        succeededIds.forEach((id) => next.delete(id));
+        return next;
+      });
+
+      const failed = results.length - succeededIds.length;
+      if (failed === 0) {
+        toast.success('Selected tasks updated');
+      } else if (succeededIds.length === 0) {
+        toast.error('Failed to update selected tasks');
+      } else {
+        toast.warn(`Updated ${succeededIds.length} task(s); ${failed} failed`);
+      }
     } catch {
       toast.error('Failed to update selected tasks');
     }
@@ -329,9 +356,7 @@ const Tasks = () => {
       ) : null}
 
       {isLoading ? (
-        <div className="rounded-2xl border border-white/5 bg-[#111420] p-6 text-sm text-gray-500">
-          Loading tasks...
-        </div>
+        <TasksPageSkeleton />
       ) : (
         <div className="space-y-6">
           {todayTasks.length ? (
@@ -392,6 +417,8 @@ const Tasks = () => {
         mode={taskModalMode}
         initialTask={editingTask}
       />
+
+      <TaskViewModal task={viewingTask} onClose={() => setViewingTask(null)} />
 
       <ConfirmModal
         open={confirmState.open}

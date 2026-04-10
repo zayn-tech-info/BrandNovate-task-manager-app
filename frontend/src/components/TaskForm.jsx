@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { FiChevronDown } from 'react-icons/fi';
+import insightsService from '../services/insights.service';
 
 const inputClass =
   'w-full rounded-xl border border-white/8 bg-[#0d0f14] px-4 py-3 text-sm text-white placeholder:text-gray-600 transition-all focus:border-blue-500/40 focus:outline-none focus:ring-2 focus:ring-blue-500/30';
@@ -49,6 +51,9 @@ const TaskForm = ({
   const [priority, setPriority] = useState('medium');
   const [status, setStatus] = useState('todo');
   const [dueDate, setDueDate] = useState('');
+  const [suggestionPrompt, setSuggestionPrompt] = useState('');
+  const [suggestionDraft, setSuggestionDraft] = useState(null);
+  const [isSuggesting, setIsSuggesting] = useState(false);
   const submitHandler = onAddTask || onSubmit;
   const submitting = Boolean(isSubmitting || isLoading);
   useEffect(() => {
@@ -60,6 +65,39 @@ const TaskForm = ({
     setStatus(initialValues.status || 'todo');
     setDueDate(formatDateInputValue(initialValues.dueDate));
   }, [initialValues]);
+
+  const handleSuggestTaskDraft = async () => {
+    setIsSuggesting(true);
+    try {
+      const response = await insightsService.getTaskDraftSuggestion({
+        prompt: suggestionPrompt.trim(),
+        draftTitle: title.trim(),
+        draftDescription: description.trim()
+      });
+      setSuggestionDraft(response.data);
+    } catch (err) {
+      setSuggestionDraft(null);
+      const msg = err.response?.data?.message || err.message || 'Could not generate a suggestion.';
+      toast.error(msg);
+    } finally {
+      setIsSuggesting(false);
+    }
+  };
+
+  const applySuggestionDraft = () => {
+    if (!suggestionDraft) return;
+    setTitle(suggestionDraft.title || '');
+    setDescription(suggestionDraft.description || '');
+    setCategoryId(suggestionDraft.category || '');
+    setPriority(suggestionDraft.priority || 'medium');
+    setStatus(suggestionDraft.status || 'todo');
+    setDueDate(formatDateInputValue(suggestionDraft.dueDate));
+    setSuggestionDraft(null);
+  };
+
+  const rejectSuggestionDraft = () => {
+    setSuggestionDraft(null);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -132,6 +170,62 @@ const TaskForm = ({
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
+      </div>
+
+      <div className="rounded-xl border border-white/10 bg-[#0d0f14] p-3">
+        <label
+          htmlFor="ai-task-prompt"
+          className="mb-2 block text-xs font-medium uppercase tracking-wider text-gray-400"
+        >
+          AI task suggestion (optional)
+        </label>
+        <div className="space-y-2">
+          <input
+            id="ai-task-prompt"
+            type="text"
+            className={inputClass}
+            placeholder="e.g. suggest my next task for today"
+            value={suggestionPrompt}
+            onChange={(e) => setSuggestionPrompt(e.target.value)}
+          />
+          <button
+            type="button"
+            onClick={handleSuggestTaskDraft}
+            disabled={isSuggesting || submitting}
+            className="rounded-lg border border-blue-500/30 bg-blue-500/10 px-3 py-2 text-xs font-semibold text-blue-300 transition-colors hover:bg-blue-500/20 disabled:opacity-60"
+          >
+            {isSuggesting ? 'Generating suggestion...' : 'Suggest task with AI'}
+          </button>
+        </div>
+        {suggestionDraft ? (
+          <div className="mt-3 rounded-lg border border-white/10 bg-[#111420] p-3">
+            <p className="text-xs font-medium uppercase tracking-wider text-gray-500">Suggested draft</p>
+            <p className="mt-2 text-sm font-semibold text-white">{suggestionDraft.title}</p>
+            <p className="mt-1 text-xs text-gray-400">{suggestionDraft.description}</p>
+            <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-gray-300">
+              <span className="rounded border border-white/10 px-2 py-1">Priority: {suggestionDraft.priority}</span>
+              <span className="rounded border border-white/10 px-2 py-1">Status: {suggestionDraft.status}</span>
+              <span className="rounded border border-white/10 px-2 py-1">Category: {suggestionDraft.category}</span>
+            </div>
+            <p className="mt-2 text-xs text-gray-500">{suggestionDraft.reason}</p>
+            <div className="mt-3 flex gap-2">
+              <button
+                type="button"
+                onClick={applySuggestionDraft}
+                className="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-500"
+              >
+                Accept suggestion
+              </button>
+              <button
+                type="button"
+                onClick={rejectSuggestionDraft}
+                className="rounded-lg border border-white/10 px-3 py-2 text-xs font-semibold text-gray-300 hover:bg-white/5"
+              >
+                Reject
+              </button>
+            </div>
+          </div>
+        ) : null}
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">

@@ -1,20 +1,21 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, ListTodo, Sparkles } from 'lucide-react';
+import { FiCalendar, FiList } from 'react-icons/fi';
+import { HiSparkles } from 'react-icons/hi2';
 
 const bullets = [
   {
-    icon: ListTodo,
+    icon: FiList,
     title: 'Capture and prioritize',
     text: 'Keep every task in one place with clear status and due dates.',
   },
   {
-    icon: Calendar,
+    icon: FiCalendar,
     title: 'Plan your week',
     text: 'See what matters next so nothing important slips through.',
   },
   {
-    icon: Sparkles,
+    icon: HiSparkles,
     title: 'Stay focused',
     text: 'Cut noise with filters and categories built for real workflows.',
   },
