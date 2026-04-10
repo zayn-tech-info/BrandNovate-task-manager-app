@@ -121,6 +121,22 @@ Do not commit `.env` files or the recovery phrase. The committed `.env.example` 
 
 Health check: **`GET /`** on the API root returns a short JSON message.
 
+## Architectural decisions
+
+**Why a split API and SPA.** The backend and frontend deploy to different hosts  Render and Vercel. Keeping them as separate packages keeps ownership clear: JSON over HTTP, explicit CORS, and no coupling to a single monolith server. That matches how many production run a REST API next to a static or edge-hosted UI.
+
+**Why JWT instead of server sessions.** Access tokens let the API stay stateless: no session store to provision for a take-home scale, and the same pattern works whether the server is one process or scaled later. Passwords are hashed with **bcryptjs**; the client sends the token on each request, and middleware verifies it once per route group.
+
+**Why MongoDB and Mongoose.** Tasks and users map naturally to documents (nested-friendly, flexible fields for things like due dates and categories). Mongoose adds validation and hooks at the schema layer so bad data is caught before it hits business logic. Atlas is easy to hand to a reviewer with a connection string rather than asking them to run a local RDBMS.
+
+**Why AI runs only on the server, with fallbacks.** Groq/Gemini keys never ship to the browser. The router tries configured providers, then falls back to **rules-based** copy so the dashboard and draft endpoints still return structured JSON if a model errors, times out, or keys are missing. Category/priority **hints** use a **keyword heuristic** on the server instead of an LLM call every time faster, cheaper, and predictable for a form assist feature.
+
+**Why optimistic updates when creating a task.** Inserting a temporary row immediately makes the list feel responsive on slow networks; the server response replaces it, and a failed request removes the placeholder and shows an error toast so the user is never left guessing.
+
+**Why Envii for environment files.** Secrets stay out of git while reviewers can still run the app locally: they restore encrypted backups with a phrase shared out-of-band (email), which is closer to how real teams handle credentials than checking `.env` into the repo.
+
+**Why Zustand for auth state.** A small global store for user + token avoids prop-drilling and keeps login/register/logout logic in one place without pulling in a heavier state library for the rest of the UI.
+
 ## Stack (summary)
 
 **Frontend:** React 18, Vite, Tailwind, MUI, Axios, React Router, Zustand, react-toastify, Chart.js.  
