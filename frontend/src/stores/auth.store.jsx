@@ -4,7 +4,7 @@ import authService from '../services/auth.service';
 
 export const useAuthStore = create((set) => ({
   currentUser: null,
-  loading: true,
+  initializing: true,
   isAuthenticated: false,
 
   initializeAuth: async () => {
@@ -28,13 +28,12 @@ export const useAuthStore = create((set) => ({
         isAuthenticated: false
       });
     } finally {
-      set({ loading: false });
+      set({ initializing: false });
     }
   },
 
   login: async (email, password) => {
     try {
-      set({ loading: true });
       const data = await authService.login(email, password);
       set({
         currentUser: data.user || data,
@@ -45,14 +44,11 @@ export const useAuthStore = create((set) => ({
     } catch (error) {
       toast.error(error.response?.data?.message || 'Login failed');
       throw error;
-    } finally {
-      set({ loading: false });
     }
   },
 
   register: async (username, email, password) => {
     try {
-      set({ loading: true });
       const data = await authService.register(username, email, password);
       if (data.accessToken) {
         set({
@@ -67,8 +63,6 @@ export const useAuthStore = create((set) => ({
     } catch (error) {
       toast.error(error.response?.data?.message || 'Registration failed');
       throw error;
-    } finally {
-      set({ loading: false });
     }
   },
 

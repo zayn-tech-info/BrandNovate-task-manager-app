@@ -72,11 +72,11 @@ const TaskList = ({
 
   return (
     <section className="space-y-3">
-      <h2 className="text-xs font-medium uppercase tracking-widest text-gray-600">{title}</h2>
-      <div className="overflow-hidden rounded-2xl border border-white/5 bg-[#0f1320]">
+      <h2 className="text-xs font-medium uppercase tracking-widest text-slate-500 dark:text-gray-600">{title}</h2>
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-white/5 dark:bg-[#0f1320]">
         <div className="overflow-x-auto">
-          <table className="min-w-full text-left text-sm text-gray-300">
-            <thead className="border-b border-white/5 bg-[#121726] text-[11px] uppercase tracking-wider text-gray-500">
+          <table className="min-w-full text-left text-sm text-slate-700 dark:text-gray-300">
+            <thead className="border-b border-slate-200 bg-slate-50 text-[11px] uppercase tracking-wider text-slate-500 dark:border-white/5 dark:bg-[#121726] dark:text-gray-500">
               <tr>
                 <th className="w-12 px-4 py-3">
                   <input
@@ -84,7 +84,7 @@ const TaskList = ({
                     checked={allSelected}
                     onChange={(event) => onSelectAllTasks(tasks, event.target.checked)}
                     aria-label={`Select all ${title.toLowerCase()}`}
-                    className="h-4 w-4 cursor-pointer rounded border border-white/15 bg-[#0d0f14]"
+                    className="h-4 w-4 cursor-pointer rounded border border-slate-300 bg-white dark:border-white/15 dark:bg-[#0d0f14]"
                   />
                 </th>
                 <th className="px-4 py-3">Title</th>
@@ -103,31 +103,34 @@ const TaskList = ({
                 const normalizedStatus = normalizeStatus(task);
 
                 return (
-                  <tr key={taskId} className="border-b border-white/[0.04] transition-colors hover:bg-white/[0.02]">
+                  <tr
+                    key={taskId}
+                    className="border-b border-slate-100 transition-colors hover:bg-slate-50 dark:border-white/[0.04] dark:hover:bg-white/[0.02]"
+                  >
                     <td className="px-4 py-3">
                       <input
                         type="checkbox"
                         checked={selectedTaskIds.has(taskId)}
                         onChange={(event) => onSelectTask(taskId, event.target.checked)}
                         aria-label={`Select ${task.title}`}
-                        className="h-4 w-4 cursor-pointer rounded border border-white/15 bg-[#0d0f14]"
+                        className="h-4 w-4 cursor-pointer rounded border border-slate-300 bg-white dark:border-white/15 dark:bg-[#0d0f14]"
                       />
                     </td>
                     <td className="px-4 py-3">
                       <button
                         type="button"
                         onClick={() => onView(task)}
-                        className={`font-medium text-left transition-colors hover:text-blue-300 ${
-                          done ? 'line-through text-gray-500' : 'text-white'
+                        className={`font-medium text-left transition-colors hover:text-blue-600 dark:hover:text-blue-300 ${
+                          done ? 'line-through text-slate-500 dark:text-gray-500' : 'text-slate-900 dark:text-white'
                         }`}
                       >
                         {task.title}
                       </button>
                       {task.description ? (
-                        <p className="mt-1 max-w-md truncate text-xs text-gray-500">{task.description}</p>
+                        <p className="mt-1 max-w-md truncate text-xs text-slate-500 dark:text-gray-500">{task.description}</p>
                       ) : null}
                     </td>
-                    <td className="px-4 py-3 text-gray-400 whitespace-nowrap">{formatDate(task.dueDate)}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-slate-600 dark:text-gray-400">{formatDate(task.dueDate)}</td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <span
                         className={`inline-flex whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold tracking-tight ${
@@ -146,13 +149,13 @@ const TaskList = ({
                         {formatStatusLabel(normalizedStatus)}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-gray-400 whitespace-nowrap">{formatDate(task.createdAt)}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-slate-600 dark:text-gray-400">{formatDate(task.createdAt)}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-2">
                         <button
                           type="button"
                           onClick={() => onView(task)}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-blue-500/25 text-blue-300 transition-colors hover:bg-blue-500/10"
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-blue-200 text-blue-700 transition-colors hover:bg-blue-50 dark:border-blue-500/25 dark:text-blue-300 dark:hover:bg-blue-500/10"
                           aria-label="View task"
                         >
                           <FiEye size={14} />
@@ -160,7 +163,7 @@ const TaskList = ({
                         <button
                           type="button"
                           onClick={() => onToggleComplete(task)}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 text-gray-300 transition-colors hover:border-white/20 hover:bg-white/[0.05]"
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 dark:border-white/10 dark:text-gray-300 dark:hover:border-white/20 dark:hover:bg-white/[0.05]"
                           aria-label={done ? 'Mark as incomplete' : 'Mark as complete'}
                         >
                           {done ? <FiRotateCcw size={14} /> : <FiCheck size={14} />}
@@ -168,7 +171,7 @@ const TaskList = ({
                         <button
                           type="button"
                           onClick={() => onEdit(task)}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 text-gray-300 transition-colors hover:border-white/20 hover:bg-white/[0.05]"
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 dark:border-white/10 dark:text-gray-300 dark:hover:border-white/20 dark:hover:bg-white/[0.05]"
                           aria-label="Edit task"
                         >
                           <FiEdit2 size={14} />
@@ -176,7 +179,7 @@ const TaskList = ({
                         <button
                           type="button"
                           onClick={() => onDelete(task)}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-red-500/20 text-red-300 transition-colors hover:bg-red-500/10"
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-red-200 text-red-600 transition-colors hover:bg-red-50 dark:border-red-500/20 dark:text-red-300 dark:hover:bg-red-500/10"
                           aria-label="Delete task"
                         >
                           <FiTrash2 size={14} />

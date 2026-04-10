@@ -1,30 +1,30 @@
 import axios from 'axios';
-import { API_URL } from '../utils/constants';
+import { apiUrl } from '../utils/constants';
 import authService from './auth.service';
 
-const API_TASKS_URL = `${API_URL}/api/tasks`;
+const apiTasksUrl = `${apiUrl}/api/tasks`;
 
 class TaskService {
   async getAllTasks() {
-    return await axios.get(API_TASKS_URL, {
+    return await axios.get(apiTasksUrl, {
       headers: authService.getAuthHeader()
     });
   }
   
   async getTaskById(id) {
-    return await axios.get(`${API_TASKS_URL}/${id}`, {
+    return await axios.get(`${apiTasksUrl}/${id}`, {
       headers: authService.getAuthHeader()
     });
   }
   
   async createTask(taskData) {
-    return await axios.post(API_TASKS_URL, taskData, {
+    return await axios.post(apiTasksUrl, taskData, {
       headers: authService.getAuthHeader()
     });
   }
   
   async updateTask(id, taskData) {
-    const response = await axios.put(`${API_TASKS_URL}/${id}`, taskData, {
+    const response = await axios.put(`${apiTasksUrl}/${id}`, taskData, {
       headers: authService.getAuthHeader()
     });
     
@@ -39,63 +39,63 @@ class TaskService {
   }
   
   async deleteTask(id) {
-    return await axios.delete(`${API_TASKS_URL}/${id}`, {
+    return await axios.delete(`${apiTasksUrl}/${id}`, {
       headers: authService.getAuthHeader()
     });
   }
   
   async getTasksByCategory(categoryId) {
-    return await axios.get(`${API_TASKS_URL}/category/${categoryId}`, {
+    return await axios.get(`${apiTasksUrl}/category/${categoryId}`, {
       headers: authService.getAuthHeader()
     });
   }
   
   async getTasksByStatus(status) {
-    return await axios.get(`${API_TASKS_URL}/status/${status}`, {
+    return await axios.get(`${apiTasksUrl}/status/${status}`, {
       headers: authService.getAuthHeader()
     });
   }
   
   async getTasksByPriority(priority) {
-    return await axios.get(`${API_TASKS_URL}/priority/${priority}`, {
+    return await axios.get(`${apiTasksUrl}/priority/${priority}`, {
       headers: authService.getAuthHeader()
     });
   }
   
   async getTasksByDueDate(date) {
-    return await axios.get(`${API_TASKS_URL}/due-date/${date}`, {
+    return await axios.get(`${apiTasksUrl}/due-date/${date}`, {
       headers: authService.getAuthHeader()
     });
   }
   
   async getTasksForToday() {
     const timezoneOffset = new Date().getTimezoneOffset();
-    return await axios.get(`${API_TASKS_URL}/today`, {
+    return await axios.get(`${apiTasksUrl}/today`, {
       params: { timezoneOffset },
       headers: authService.getAuthHeader()
     });
   }
   
   async getTasksForWeek() {
-    return await axios.get(`${API_TASKS_URL}/week`, {
+    return await axios.get(`${apiTasksUrl}/week`, {
       headers: authService.getAuthHeader()
     });
   }
   
   async getTasksForMonth() {
-    return await axios.get(`${API_TASKS_URL}/month`, {
+    return await axios.get(`${apiTasksUrl}/month`, {
       headers: authService.getAuthHeader()
     });
   }
   
   async getCompletedTasks() {
-    return await axios.get(`${API_TASKS_URL}/completed`, {
+    return await axios.get(`${apiTasksUrl}/completed`, {
       headers: authService.getAuthHeader()
     });
   }
   
   async markTaskAsCompleted(id) {
-    const response = await axios.patch(`${API_TASKS_URL}/${id}/complete`, {}, {
+    const response = await axios.patch(`${apiTasksUrl}/${id}/complete`, {}, {
       headers: authService.getAuthHeader()
     });
     
@@ -110,7 +110,7 @@ class TaskService {
   }
   
   async markTaskAsIncomplete(id) {
-    const response = await axios.patch(`${API_TASKS_URL}/${id}/incomplete`, {}, {
+    const response = await axios.patch(`${apiTasksUrl}/${id}/incomplete`, {}, {
       headers: authService.getAuthHeader()
     });
     

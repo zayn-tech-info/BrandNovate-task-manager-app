@@ -8,10 +8,10 @@ const {
   validateTaskDraftOutput
 } = require('../aiShared');
 
-const MODEL = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
-const TIMEOUT_MS = Number(process.env.GEMINI_TIMEOUT_MS || 12000);
+const geminiModel = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
+const geminiTimeoutMs = Number(process.env.GEMINI_TIMEOUT_MS || 12000);
 
-const TASK_DRAFT_JSON_SCHEMA = {
+const taskDraftJsonSchema = {
   type: 'object',
   additionalProperties: false,
   properties: {
@@ -67,14 +67,14 @@ const generateGeminiInsights = async ({ tasks, kpis }) => {
   const prompt = buildOverviewInsightsPrompt({ tasks, kpis });
   const response = await withTimeout(
     ai.models.generateContent({
-      model: MODEL,
+      model: geminiModel,
       contents: prompt,
       config: {
         temperature: 0.6,
         maxOutputTokens: 2048
       }
     }),
-    TIMEOUT_MS
+    geminiTimeoutMs
   );
 
   const text = extractModelText(response);
@@ -104,28 +104,28 @@ const generateGeminiTaskDraft = async (ctx) => {
   try {
     response = await withTimeout(
       ai.models.generateContent({
-        model: MODEL,
+        model: geminiModel,
         contents: promptText,
         config: {
           responseMimeType: 'application/json',
-          responseJsonSchema: TASK_DRAFT_JSON_SCHEMA,
+          responseJsonSchema: taskDraftJsonSchema,
           temperature: 0.9,
           maxOutputTokens: 1024
         }
       }),
-      TIMEOUT_MS
+      geminiTimeoutMs
     );
   } catch {
     response = await withTimeout(
       ai.models.generateContent({
-        model: MODEL,
+        model: geminiModel,
         contents: promptText,
         config: {
           temperature: 0.9,
           maxOutputTokens: 1024
         }
       }),
-      TIMEOUT_MS
+      geminiTimeoutMs
     );
   }
 

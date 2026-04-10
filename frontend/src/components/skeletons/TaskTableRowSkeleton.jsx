@@ -3,7 +3,7 @@ import Skeleton from '@mui/material/Skeleton';
 import Box from '@mui/material/Box';
 
 const TaskTableRowSkeleton = () => (
-  <tr className="border-b border-white/[0.04]">
+  <tr className="border-b border-slate-100 dark:border-white/[0.04]">
     <td className="px-4 py-3 align-middle">
       <Skeleton variant="rectangular" width={16} height={16} sx={{ borderRadius: '4px' }} />
     </td>

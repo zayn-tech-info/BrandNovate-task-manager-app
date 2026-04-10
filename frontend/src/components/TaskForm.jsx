@@ -1,29 +1,32 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 import { FiChevronDown } from 'react-icons/fi';
 import insightsService from '../services/insights.service';
 
 const inputClass =
-  'w-full rounded-xl border border-white/8 bg-[#0d0f14] px-4 py-3 text-sm text-white placeholder:text-gray-600 transition-all focus:border-blue-500/40 focus:outline-none focus:ring-2 focus:ring-blue-500/30';
+  'w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 transition-all focus:border-blue-500/40 focus:outline-none focus:ring-2 focus:ring-blue-500/30 dark:border-white/8 dark:bg-[#0d0f14] dark:text-white dark:placeholder:text-gray-600';
 
 const selectClass = `${inputClass} app-select cursor-pointer appearance-none pr-10`;
 
-const STATUS_OPTIONS = [
+const statusOptions = [
   { value: 'todo', label: 'To do' },
   { value: 'in-progress', label: 'In progress' },
   { value: 'review', label: 'Review' },
 ];
 
-const PRIORITY_OPTIONS = [
+const priorityOptions = [
   { value: 'low', label: 'Low' },
   { value: 'medium', label: 'Medium' },
   { value: 'high', label: 'High' },
 ];
-const CATEGORY_OPTIONS = ['Coding', 'Design', 'Homework', 'Other'];
+const categoryOptions = ['Coding', 'Design', 'Homework', 'Other'];
+
+const fieldSuggestMinChars = 8;
+const fieldSuggestDebounceMs = 600;
 
 const SelectChevron = () => (
   <FiChevronDown
-    className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500"
+    className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 dark:text-gray-500"
     aria-hidden
   />
 );
@@ -54,8 +57,25 @@ const TaskForm = ({
   const [suggestionPrompt, setSuggestionPrompt] = useState('');
   const [suggestionDraft, setSuggestionDraft] = useState(null);
   const [isSuggesting, setIsSuggesting] = useState(false);
+  const [fieldSuggestReason, setFieldSuggestReason] = useState('');
+  const categoryManualRef = useRef(false);
+  const priorityManualRef = useRef(false);
+  const fieldSuggestSeqRef = useRef(0);
   const submitHandler = onAddTask || onSubmit;
   const submitting = Boolean(isSubmitting || isLoading);
+
+  useEffect(() => {
+    if (!initialValues) {
+      categoryManualRef.current = false;
+      priorityManualRef.current = false;
+      setFieldSuggestReason('');
+      return;
+    }
+    categoryManualRef.current = true;
+    priorityManualRef.current = true;
+    setFieldSuggestReason('');
+  }, [initialValues]);
+
   useEffect(() => {
     if (!initialValues) return;
     setTitle(initialValues.title || '');
@@ -65,6 +85,39 @@ const TaskForm = ({
     setStatus(initialValues.status || 'todo');
     setDueDate(formatDateInputValue(initialValues.dueDate));
   }, [initialValues]);
+
+  useEffect(() => {
+    if (initialValues) return;
+
+    const combined = `${title} ${description}`.trim();
+    if (combined.length < fieldSuggestMinChars) {
+      setFieldSuggestReason('');
+      return undefined;
+    }
+
+    const timer = setTimeout(async () => {
+      const seq = ++fieldSuggestSeqRef.current;
+      try {
+        const { data } = await insightsService.getTaskFieldSuggestions({
+          draftTitle: title.trim(),
+          draftDescription: description.trim()
+        });
+        if (fieldSuggestSeqRef.current !== seq) return;
+        if (!categoryManualRef.current && data?.category) {
+          setCategoryId(data.category);
+        }
+        if (!priorityManualRef.current && data?.priority) {
+          setPriority(data.priority);
+        }
+        setFieldSuggestReason(typeof data?.reason === 'string' ? data.reason : '');
+      } catch {
+        if (fieldSuggestSeqRef.current !== seq) return;
+        setFieldSuggestReason('');
+      }
+    }, fieldSuggestDebounceMs);
+
+    return () => clearTimeout(timer);
+  }, [title, description, initialValues]);
 
   const handleSuggestTaskDraft = async () => {
     setIsSuggesting(true);
@@ -127,6 +180,9 @@ const TaskForm = ({
       setPriority('medium');
       setStatus('todo');
       setDueDate('');
+      categoryManualRef.current = false;
+      priorityManualRef.current = false;
+      setFieldSuggestReason('');
       onSuccess?.();
     } catch {
       // Parent handles toast / state; keep modal open
@@ -136,13 +192,13 @@ const TaskForm = ({
   const formClass =
     variant === 'modal'
       ? 'space-y-5'
-      : 'mb-6 space-y-5 rounded-2xl border border-white/5 bg-[#111420] p-6';
+      : 'mb-6 space-y-5 rounded-2xl border border-slate-200 bg-white p-6 dark:border-white/5 dark:bg-[#111420]';
   const buttonLabel = submitting ? 'Saving...' : submitLabel || '+ Add Task';
 
   return (
     <form onSubmit={handleSubmit} className={formClass}>
       <div>
-        <label htmlFor="task-title" className="mb-2 block text-xs font-medium uppercase tracking-wider text-gray-400">
+        <label htmlFor="task-title" className="mb-2 block text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-gray-400">
           What needs to get done?
         </label>
         <input
@@ -159,7 +215,7 @@ const TaskForm = ({
       <div>
         <label
           htmlFor="task-description"
-          className="mb-2 block text-xs font-medium uppercase tracking-wider text-gray-400"
+          className="mb-2 block text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-gray-400"
         >
           Add a description (optional)
         </label>
@@ -172,10 +228,10 @@ const TaskForm = ({
         />
       </div>
 
-      <div className="rounded-xl border border-white/10 bg-[#0d0f14] p-3">
+      <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-white/10 dark:bg-[#0d0f14]">
         <label
           htmlFor="ai-task-prompt"
-          className="mb-2 block text-xs font-medium uppercase tracking-wider text-gray-400"
+          className="mb-2 block text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-gray-400"
         >
           AI task suggestion (optional)
         </label>
@@ -198,16 +254,16 @@ const TaskForm = ({
           </button>
         </div>
         {suggestionDraft ? (
-          <div className="mt-3 rounded-lg border border-white/10 bg-[#111420] p-3">
-            <p className="text-xs font-medium uppercase tracking-wider text-gray-500">Suggested draft</p>
-            <p className="mt-2 text-sm font-semibold text-white">{suggestionDraft.title}</p>
-            <p className="mt-1 text-xs text-gray-400">{suggestionDraft.description}</p>
-            <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-gray-300">
-              <span className="rounded border border-white/10 px-2 py-1">Priority: {suggestionDraft.priority}</span>
-              <span className="rounded border border-white/10 px-2 py-1">Status: {suggestionDraft.status}</span>
-              <span className="rounded border border-white/10 px-2 py-1">Category: {suggestionDraft.category}</span>
+          <div className="mt-3 rounded-lg border border-slate-200 bg-white p-3 dark:border-white/10 dark:bg-[#111420]">
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-gray-500">Suggested draft</p>
+            <p className="mt-2 text-sm font-semibold text-slate-900 dark:text-white">{suggestionDraft.title}</p>
+            <p className="mt-1 text-xs text-slate-600 dark:text-gray-400">{suggestionDraft.description}</p>
+            <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-slate-700 dark:text-gray-300">
+              <span className="rounded border border-slate-200 px-2 py-1 dark:border-white/10">Priority: {suggestionDraft.priority}</span>
+              <span className="rounded border border-slate-200 px-2 py-1 dark:border-white/10">Status: {suggestionDraft.status}</span>
+              <span className="rounded border border-slate-200 px-2 py-1 dark:border-white/10">Category: {suggestionDraft.category}</span>
             </div>
-            <p className="mt-2 text-xs text-gray-500">{suggestionDraft.reason}</p>
+            <p className="mt-2 text-xs text-slate-500 dark:text-gray-500">{suggestionDraft.reason}</p>
             <div className="mt-3 flex gap-2">
               <button
                 type="button"
@@ -219,7 +275,7 @@ const TaskForm = ({
               <button
                 type="button"
                 onClick={rejectSuggestionDraft}
-                className="rounded-lg border border-white/10 px-3 py-2 text-xs font-semibold text-gray-300 hover:bg-white/5"
+                className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-white/10 dark:text-gray-300 dark:hover:bg-white/5"
               >
                 Reject
               </button>
@@ -230,18 +286,21 @@ const TaskForm = ({
 
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
-          <label htmlFor="task-category" className="mb-2 block text-xs font-medium uppercase tracking-wider text-gray-400">
+          <label htmlFor="task-category" className="mb-2 block text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-gray-400">
             Category
           </label>
           <div className="relative">
             <select
               id="task-category"
               value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
+              onChange={(e) => {
+                categoryManualRef.current = true;
+                setCategoryId(e.target.value);
+              }}
               className={selectClass}
             >
               <option value="">Select a category</option>
-              {CATEGORY_OPTIONS.map((name) => (
+              {categoryOptions.map((name) => (
                 <option key={name} value={name}>
                   {name}
                 </option>
@@ -252,17 +311,20 @@ const TaskForm = ({
         </div>
 
         <div>
-          <label htmlFor="task-priority" className="mb-2 block text-xs font-medium uppercase tracking-wider text-gray-400">
+          <label htmlFor="task-priority" className="mb-2 block text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-gray-400">
             Priority
           </label>
           <div className="relative">
             <select
               id="task-priority"
               value={priority}
-              onChange={(e) => setPriority(e.target.value)}
+              onChange={(e) => {
+                priorityManualRef.current = true;
+                setPriority(e.target.value);
+              }}
               className={selectClass}
             >
-              {PRIORITY_OPTIONS.map((p) => (
+              {priorityOptions.map((p) => (
                 <option key={p.value} value={p.value}>
                   {p.label}
                 </option>
@@ -273,9 +335,13 @@ const TaskForm = ({
         </div>
       </div>
 
+      {fieldSuggestReason && !initialValues ? (
+        <p className="text-xs leading-relaxed text-slate-500 dark:text-gray-500">{fieldSuggestReason}</p>
+      ) : null}
+
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
-          <label htmlFor="task-status" className="mb-2 block text-xs font-medium uppercase tracking-wider text-gray-400">
+          <label htmlFor="task-status" className="mb-2 block text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-gray-400">
             Status
           </label>
           <div className="relative">
@@ -285,7 +351,7 @@ const TaskForm = ({
               onChange={(e) => setStatus(e.target.value)}
               className={selectClass}
             >
-              {STATUS_OPTIONS.map((s) => (
+              {statusOptions.map((s) => (
                 <option key={s.value} value={s.value}>
                   {s.label}
                 </option>
@@ -296,7 +362,7 @@ const TaskForm = ({
         </div>
 
         <div>
-          <label htmlFor="task-due" className="mb-2 block text-xs font-medium uppercase tracking-wider text-gray-400">
+          <label htmlFor="task-due" className="mb-2 block text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-gray-400">
             Due date (optional)
           </label>
           <input

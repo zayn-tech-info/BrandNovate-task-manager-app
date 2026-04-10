@@ -1,5 +1,6 @@
 const Task = require('../models/task.model');
 const { generateOverviewInsights, generateTaskDraftSuggestion } = require('../services/ai/providerRouter');
+const { classifyTaskFields } = require('../services/ai/taskFieldClassifier');
 
 const getOverviewInsights = async (req, res) => {
   try {
@@ -29,7 +30,19 @@ const getTaskDraftSuggestion = async (req, res) => {
   }
 };
 
+const getTaskFieldSuggestions = async (req, res) => {
+  try {
+    const draftTitle = String(req.body?.draftTitle || '').trim();
+    const draftDescription = String(req.body?.draftDescription || '').trim();
+    const hints = classifyTaskFields({ draftTitle, draftDescription });
+    return res.status(200).json(hints);
+  } catch (error) {
+    return res.status(500).json({ message: 'Failed to suggest category or priority.' });
+  }
+};
+
 module.exports = {
   getOverviewInsights,
-  getTaskDraftSuggestion
+  getTaskDraftSuggestion,
+  getTaskFieldSuggestions
 };
