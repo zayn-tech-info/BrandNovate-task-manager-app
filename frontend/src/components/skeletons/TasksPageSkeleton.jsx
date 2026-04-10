@@ -11,7 +11,7 @@ const tableHead = (
       <th className="min-w-[140px] whitespace-nowrap px-4 py-3">Importance</th>
       <th className="min-w-[140px] whitespace-nowrap px-4 py-3">Status</th>
       <th className="min-w-[140px] whitespace-nowrap px-4 py-3">Date</th>
-      <th className="w-[220px] whitespace-nowrap px-4 py-3 text-right">Actions</th>
+      <th className="w-16 whitespace-nowrap px-4 py-3 text-right">Actions</th>
     </tr>
   </thead>
 );
@@ -26,18 +26,16 @@ const TaskCardSkeleton = () => (
         sx={{ borderRadius: '4px', flexShrink: 0, mt: 0.5 }}
       />
       <div className="min-w-0 flex-1 space-y-2">
-        <Skeleton variant="text" width="88%" height={22} sx={{ maxWidth: 320 }} />
+        <div className="flex items-start justify-between gap-2">
+          <Skeleton variant="text" width="78%" height={22} sx={{ maxWidth: 280 }} />
+          <Skeleton variant="rounded" width={36} height={36} sx={{ borderRadius: '8px', flexShrink: 0 }} />
+        </div>
         <Skeleton variant="text" width="100%" height={14} />
         <Skeleton variant="text" width="55%" height={14} />
         <div className="flex flex-wrap gap-2 pt-0.5">
           <Skeleton variant="rounded" width={56} height={22} sx={{ borderRadius: 9999 }} />
           <Skeleton variant="rounded" width={72} height={22} sx={{ borderRadius: 9999 }} />
           <Skeleton variant="text" width={72} height={16} />
-        </div>
-        <div className="flex flex-wrap justify-end gap-2 border-t border-slate-100 pt-3 dark:border-white/[0.06]">
-          {[0, 1, 2, 3].map((key) => (
-            <Skeleton key={key} variant="rounded" width={44} height={44} sx={{ borderRadius: '8px' }} />
-          ))}
         </div>
       </div>
     </div>

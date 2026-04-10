@@ -1,6 +1,5 @@
 import React from 'react';
 import Skeleton from '@mui/material/Skeleton';
-import Box from '@mui/material/Box';
 
 const TaskTableRowSkeleton = () => (
   <tr className="border-b border-slate-100 dark:border-white/[0.04]">
@@ -24,11 +23,9 @@ const TaskTableRowSkeleton = () => (
       <Skeleton variant="text" width={88} height={20} />
     </td>
     <td className="px-4 py-3 align-middle">
-      <Box className="flex items-center justify-end gap-2">
-        {[0, 1, 2, 3].map((key) => (
-          <Skeleton key={key} variant="circular" width={32} height={32} />
-        ))}
-      </Box>
+      <div className="flex justify-end">
+        <Skeleton variant="rounded" width={36} height={36} sx={{ borderRadius: '8px' }} />
+      </div>
     </td>
   </tr>
 );

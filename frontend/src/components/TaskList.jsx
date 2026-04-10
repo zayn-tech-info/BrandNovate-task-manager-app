@@ -1,5 +1,5 @@
-import React from 'react';
-import { FiCheck, FiEdit2, FiEye, FiRotateCcw, FiTrash2 } from 'react-icons/fi';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { FiMoreVertical } from 'react-icons/fi';
 
 const isCompleted = (task) => task.completed === true || task.status === 'completed';
 
@@ -55,48 +55,117 @@ const normalizePriority = (priority) => {
   return 'medium';
 };
 
-const taskActionBtnBase =
-  'inline-flex items-center justify-center rounded-lg border transition-colors shrink-0';
-const taskActionBtnDesktop = `${taskActionBtnBase} h-8 w-8`;
-const taskActionBtnMobile = `${taskActionBtnBase} min-h-[44px] min-w-[44px]`;
+const menuItemClass =
+  'block w-full px-4 py-2.5 text-left text-sm text-slate-700 transition-colors hover:bg-slate-50 dark:text-gray-200 dark:hover:bg-white/[0.06]';
 
-const TaskActions = ({ task, done, onView, onToggleComplete, onEdit, onDelete, variant = 'desktop' }) => {
-  const size = variant === 'mobile' ? 16 : 14;
-  const btn = variant === 'mobile' ? taskActionBtnMobile : taskActionBtnDesktop;
+const menuDestructiveClass =
+  'block w-full px-4 py-2.5 text-left text-sm text-red-600 transition-colors hover:bg-red-50 dark:text-red-300 dark:hover:bg-red-500/10';
+
+const TaskKebabMenu = ({ task, done, onView, onEdit, onToggleComplete, onDelete }) => {
+  const [open, setOpen] = useState(false);
+  const [position, setPosition] = useState({ top: 0, left: 0, width: 176 });
+  const triggerRef = useRef(null);
+
+  const updatePosition = useCallback(() => {
+    const el = triggerRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const menuWidth = 176;
+    const left = Math.min(r.right - menuWidth, window.innerWidth - menuWidth - 8);
+    setPosition({
+      top: r.bottom + 4,
+      left: Math.max(8, left),
+      width: menuWidth
+    });
+  }, []);
+
+  useLayoutEffect(() => {
+    if (open) updatePosition();
+  }, [open, updatePosition]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onResize = () => updatePosition();
+    const onScroll = () => updatePosition();
+    window.addEventListener('resize', onResize);
+    window.addEventListener('scroll', onScroll, true);
+    return () => {
+      window.removeEventListener('resize', onResize);
+      window.removeEventListener('scroll', onScroll, true);
+    };
+  }, [open, updatePosition]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [open]);
+
+  const close = () => setOpen(false);
+  const run = (fn) => {
+    fn();
+    close();
+  };
+
   return (
     <>
+      {open ? (
+        <div className="fixed inset-0 z-40 bg-transparent" aria-hidden="true" onClick={close} />
+      ) : null}
       <button
+        ref={triggerRef}
         type="button"
-        onClick={() => onView(task)}
-        className={`${btn} border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-500/25 dark:text-blue-300 dark:hover:bg-blue-500/10`}
-        aria-label="View task"
+        onClick={() => setOpen((v) => !v)}
+        className={`shrink-0 rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-gray-400 dark:hover:bg-white/[0.06] dark:hover:text-white ${open ? 'relative z-50' : ''}`}
+        aria-expanded={open}
+        aria-haspopup="menu"
+        aria-label="Task actions"
       >
-        <FiEye size={size} />
+        <FiMoreVertical className="h-5 w-5" aria-hidden />
       </button>
-      <button
-        type="button"
-        onClick={() => onToggleComplete(task)}
-        className={`${btn} border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50 dark:border-white/10 dark:text-gray-300 dark:hover:border-white/20 dark:hover:bg-white/[0.05]`}
-        aria-label={done ? 'Mark as incomplete' : 'Mark as complete'}
-      >
-        {done ? <FiRotateCcw size={size} /> : <FiCheck size={size} />}
-      </button>
-      <button
-        type="button"
-        onClick={() => onEdit(task)}
-        className={`${btn} border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50 dark:border-white/10 dark:text-gray-300 dark:hover:border-white/20 dark:hover:bg-white/[0.05]`}
-        aria-label="Edit task"
-      >
-        <FiEdit2 size={size} />
-      </button>
-      <button
-        type="button"
-        onClick={() => onDelete(task)}
-        className={`${btn} border-red-200 text-red-600 hover:bg-red-50 dark:border-red-500/20 dark:text-red-300 dark:hover:bg-red-500/10`}
-        aria-label="Delete task"
-      >
-        <FiTrash2 size={size} />
-      </button>
+      {open ? (
+        <div
+          role="menu"
+          className="fixed z-50 rounded-xl border border-slate-200 bg-white py-1 shadow-lg dark:border-white/10 dark:bg-[#111420]"
+          style={{ top: position.top, left: position.left, minWidth: position.width }}
+        >
+          <button
+            type="button"
+            role="menuitem"
+            className={menuItemClass}
+            onClick={() => run(() => onView(task))}
+          >
+            View
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            className={menuItemClass}
+            onClick={() => run(() => onEdit(task))}
+          >
+            Edit
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            className={menuItemClass}
+            onClick={() => run(() => onToggleComplete(task))}
+          >
+            {done ? 'Undo' : 'Done'}
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            className={menuDestructiveClass}
+            onClick={() => run(() => onDelete(task))}
+          >
+            Delete
+          </button>
+        </div>
+      ) : null}
     </>
   );
 };
@@ -152,15 +221,25 @@ const TaskList = ({
                     className="mt-1 h-4 w-4 shrink-0 cursor-pointer rounded border border-slate-300 bg-white dark:border-white/15 dark:bg-[#0d0f14]"
                   />
                   <div className="min-w-0 flex-1">
-                    <button
-                      type="button"
-                      onClick={() => onView(task)}
-                      className={`w-full text-left font-semibold leading-snug transition-colors hover:text-blue-600 dark:hover:text-blue-300 ${
-                        done ? 'text-slate-500 line-through dark:text-gray-500' : 'text-slate-900 dark:text-white'
-                      }`}
-                    >
-                      {task.title}
-                    </button>
+                    <div className="flex items-start justify-between gap-2">
+                      <button
+                        type="button"
+                        onClick={() => onView(task)}
+                        className={`min-w-0 flex-1 text-left font-semibold leading-snug transition-colors hover:text-blue-600 dark:hover:text-blue-300 ${
+                          done ? 'text-slate-500 line-through dark:text-gray-500' : 'text-slate-900 dark:text-white'
+                        }`}
+                      >
+                        {task.title}
+                      </button>
+                      <TaskKebabMenu
+                        task={task}
+                        done={done}
+                        onView={onView}
+                        onEdit={onEdit}
+                        onToggleComplete={onToggleComplete}
+                        onDelete={onDelete}
+                      />
+                    </div>
                     {task.description ? (
                       <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-slate-500 dark:text-gray-500">
                         {task.description}
@@ -184,17 +263,6 @@ const TaskList = ({
                       {due !== '-' ? (
                         <span className="text-[11px] text-slate-500 dark:text-gray-500">Due {due}</span>
                       ) : null}
-                    </div>
-                    <div className="mt-3 flex flex-wrap items-center justify-end gap-2 border-t border-slate-100 pt-3 dark:border-white/[0.06]">
-                      <TaskActions
-                        task={task}
-                        done={done}
-                        onView={onView}
-                        onToggleComplete={onToggleComplete}
-                        onEdit={onEdit}
-                        onDelete={onDelete}
-                        variant="mobile"
-                      />
                     </div>
                   </div>
                 </div>
@@ -221,7 +289,7 @@ const TaskList = ({
                 <th className="min-w-[140px] whitespace-nowrap px-4 py-3">Importance</th>
                 <th className="min-w-[140px] whitespace-nowrap px-4 py-3">Status</th>
                 <th className="min-w-[140px] whitespace-nowrap px-4 py-3">Date</th>
-                <th className="w-[220px] whitespace-nowrap px-4 py-3 text-right">Actions</th>
+                <th className="w-16 whitespace-nowrap px-4 py-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -280,15 +348,14 @@ const TaskList = ({
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 text-slate-600 dark:text-gray-400">{formatDate(task.createdAt)}</td>
                     <td className="px-4 py-3">
-                      <div className="flex items-center justify-end gap-2">
-                        <TaskActions
+                      <div className="flex justify-end">
+                        <TaskKebabMenu
                           task={task}
                           done={done}
                           onView={onView}
-                          onToggleComplete={onToggleComplete}
                           onEdit={onEdit}
+                          onToggleComplete={onToggleComplete}
                           onDelete={onDelete}
-                          variant="desktop"
                         />
                       </div>
                     </td>
