@@ -23,7 +23,7 @@ const extractMongooseErrorMessage = (error, fallbackMessage) => {
   return fallbackMessage;
 };
 
-const signup = async (req, res) => {
+const register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
@@ -35,8 +35,15 @@ const signup = async (req, res) => {
       return res.status(400).json({ message: 'Username must be at least 3 characters.' });
     }
 
-    if (String(password).length < 8) {
+    const pwd = String(password);
+    if (pwd.length < 8) {
       return res.status(400).json({ message: 'Password must be at least 8 characters.' });
+    }
+    if (pwd.length > 30) {
+      return res.status(400).json({ message: 'Password must be at most 30 characters.' });
+    }
+    if (!/\d/.test(pwd) || !/[A-Za-z]/.test(pwd)) {
+      return res.status(400).json({ message: 'Password must include at least one letter and one number.' });
     }
 
     const normalizedEmail = normalizeEmail(email);
@@ -62,7 +69,7 @@ const signup = async (req, res) => {
   }
 };
 
-const signin = async (req, res) => {
+const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -71,7 +78,7 @@ const signin = async (req, res) => {
     }
 
     const normalizedEmail = normalizeEmail(email);
-    const user = await User.findOne({ email: normalizedEmail });
+    const user = await User.findOne({ email: normalizedEmail }).select('+password');
     if (!user) {
       return res.status(401).json({ message: 'Invalid credentials.' });
     }
@@ -88,6 +95,6 @@ const signin = async (req, res) => {
 };
 
 module.exports = {
-  signup,
-  signin
+  register,
+  login
 };

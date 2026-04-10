@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore as useAuth } from '../stores/auth.store';
-import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { FiMail, FiLock, FiEye, FiEyeOff } from 'react-icons/fi';
+import { ImSpinner2 } from 'react-icons/im';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -55,24 +56,24 @@ const Login = () => {
 
   return (
     <div className="p-6 md:p-8">
-      <h2 className="mb-6 text-center text-2xl font-semibold tracking-tight text-white">
+      <h2 className="mb-6 text-center text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
         Login to Your Account
       </h2>
 
       {errors.form && (
-        <div className="mb-4 rounded-lg border border-red-500/30 bg-red-950/40 p-3 text-sm text-red-200">
+        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800 dark:border-red-500/30 dark:bg-red-950/40 dark:text-red-200">
           {errors.form}
         </div>
       )}
 
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label className="mb-2 block text-sm font-medium text-gray-400" htmlFor="email">
+          <label className="mb-2 block text-sm font-medium text-slate-600 dark:text-gray-400" htmlFor="email">
             Email Address
           </label>
           <div className="relative">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-              <Mail className="h-4 w-4 text-gray-600" strokeWidth={2} />
+              <FiMail className="h-4 w-4 text-gray-600" />
             </div>
             <input
               id="email"
@@ -87,20 +88,14 @@ const Login = () => {
         </div>
 
         <div className="mb-6">
-          <div className="mb-2 flex items-center justify-between">
-            <label className="block text-sm font-medium text-gray-400" htmlFor="password">
+          <div className="mb-2">
+            <label className="block text-sm font-medium text-slate-600 dark:text-gray-400" htmlFor="password">
               Password
             </label>
-            <Link
-              to="/forgot-password"
-              className="text-sm font-medium text-blue-400 hover:text-blue-300"
-            >
-              Forgot password?
-            </Link>
           </div>
           <div className="relative">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-              <Lock className="h-4 w-4 text-gray-600" strokeWidth={2} />
+              <FiLock className="h-4 w-4 text-gray-600" />
             </div>
             <input
               id="password"
@@ -117,9 +112,9 @@ const Login = () => {
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? (
-                <EyeOff className="h-4 w-4 text-gray-600 hover:text-gray-400" strokeWidth={2} />
+                <FiEyeOff className="h-4 w-4 text-gray-600 hover:text-gray-400" />
               ) : (
-                <Eye className="h-4 w-4 text-gray-600 hover:text-gray-400" strokeWidth={2} />
+                <FiEye className="h-4 w-4 text-gray-600 hover:text-gray-400" />
               )}
             </button>
           </div>
@@ -129,7 +124,7 @@ const Login = () => {
         <button type="submit" className="btn btn-primary w-full py-2.5" disabled={isSubmitting}>
           {isSubmitting ? (
             <span className="flex items-center justify-center">
-              <Loader2 className="-ml-1 mr-2 h-4 w-4 animate-spin text-white" strokeWidth={2} />
+              <ImSpinner2 className="-ml-1 mr-2 h-4 w-4 animate-spin text-white" />
               Logging in...
             </span>
           ) : (
@@ -139,9 +134,9 @@ const Login = () => {
       </form>
 
       <div className="mt-6 text-center">
-        <p className="text-sm text-gray-400">
+        <p className="text-sm text-slate-600 dark:text-gray-400">
           Don&apos;t have an account?{' '}
-          <Link to="/register" className="font-medium text-blue-400 hover:text-blue-300">
+          <Link to="/register" className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
             Sign up
           </Link>
         </p>

@@ -1,14 +1,26 @@
 const Task = require('../models/task.model');
 
-const TASK_STATUSES = ['todo', 'in-progress', 'review', 'completed'];
-const TASK_PRIORITIES = ['low', 'medium', 'high'];
+const allowedStatuses = Task.taskStatuses;
+const allowedPriorities = Task.taskPriorities;
+
+const dayMs = 24 * 60 * 60 * 1000;
+
+const getLocalDayBoundsUtc = (offsetMinutes) => {
+  const now = Date.now();
+  const shifted = new Date(now - offsetMinutes * 60 * 1000);
+  const y = shifted.getUTCFullYear();
+  const m = shifted.getUTCMonth();
+  const d = shifted.getUTCDate();
+  const startUtc = Date.UTC(y, m, d, 0, 0, 0, 0) + offsetMinutes * 60 * 1000;
+  return { start: new Date(startUtc), end: new Date(startUtc + dayMs) };
+};
 
 const parseStatus = (status, hasField = true) => {
   if (!hasField) return { hasValue: false, value: undefined };
   if (status == null || status === '') return { hasValue: true, value: undefined };
   const normalized = String(status).toLowerCase().trim();
-  if (!TASK_STATUSES.includes(normalized)) {
-    return { hasValue: true, error: `Invalid status. Allowed values: ${TASK_STATUSES.join(', ')}.` };
+  if (!allowedStatuses.includes(normalized)) {
+    return { hasValue: true, error: `Invalid status. Allowed values: ${allowedStatuses.join(', ')}.` };
   }
   return { hasValue: true, value: normalized };
 };
@@ -17,8 +29,8 @@ const parsePriority = (priority, hasField = true) => {
   if (!hasField) return { hasValue: false, value: undefined };
   if (priority == null || priority === '') return { hasValue: true, value: undefined };
   const normalized = String(priority).toLowerCase().trim();
-  if (!TASK_PRIORITIES.includes(normalized)) {
-    return { hasValue: true, error: `Invalid priority. Allowed values: ${TASK_PRIORITIES.join(', ')}.` };
+  if (!allowedPriorities.includes(normalized)) {
+    return { hasValue: true, error: `Invalid priority. Allowed values: ${allowedPriorities.join(', ')}.` };
   }
   return { hasValue: true, value: normalized };
 };
@@ -73,16 +85,29 @@ const getAllTasks = async (req, res) => {
 
 const getTasksForToday = async (req, res) => {
   try {
-    const start = new Date();
-    start.setHours(0, 0, 0, 0);
-    const end = new Date(start);
-    end.setDate(end.getDate() + 1);
+    let start;
+    let end;
+    const raw = req.query.timezoneOffset;
+
+    if (raw === undefined || raw === '') {
+      start = new Date();
+      start.setHours(0, 0, 0, 0);
+      end = new Date(start.getTime() + dayMs);
+    } else {
+      const n = Number(raw);
+      if (!Number.isFinite(n) || !Number.isInteger(n) || n < -840 || n > 840) {
+        return res.status(400).json({
+          message:
+            'Invalid timezoneOffset. Send an integer from -840 to 840 (same convention as Date.prototype.getTimezoneOffset()).'
+        });
+      }
+      ({ start, end } = getLocalDayBoundsUtc(n));
+    }
 
     const tasks = await Task.find({
       user: req.userId,
       dueDate: { $gte: start, $lt: end }
-    })
-      .sort({ dueDate: 1 });
+    }).sort({ dueDate: 1 });
 
     return res.status(200).json(tasks);
   } catch (error) {

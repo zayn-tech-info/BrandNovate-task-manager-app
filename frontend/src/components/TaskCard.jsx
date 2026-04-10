@@ -29,20 +29,24 @@ const TaskCard = ({ task, onToggleComplete, onDelete }) => {
   const done = isCompleted(task);
 
   return (
-    <div className="group flex items-start justify-between gap-3 rounded-2xl border border-white/5 bg-[#111420] px-5 py-4 transition-all hover:border-white/10">
+    <div className="group flex items-start justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-4 transition-all hover:border-slate-300 dark:border-white/5 dark:bg-[#111420] dark:hover:border-white/10">
       <div className="flex min-w-0 items-start gap-3">
         <input
           type="checkbox"
           checked={done}
           onChange={() => onToggleComplete(task)}
-          className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer appearance-none rounded-full border border-gray-700 transition-colors group-hover:border-gray-500 checked:border-green-500/40 checked:bg-green-500/20 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+          className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer appearance-none rounded-full border border-slate-400 transition-colors group-hover:border-slate-500 checked:border-green-600/50 checked:bg-green-100 focus:outline-none focus:ring-2 focus:ring-blue-500/30 dark:border-gray-700 dark:group-hover:border-gray-500 dark:checked:border-green-500/40 dark:checked:bg-green-500/20"
         />
         <div className="min-w-0 flex-1">
-          <p className={`text-sm font-medium ${done ? 'text-gray-600 line-through' : 'text-white'}`}>{task.title}</p>
+          <p
+            className={`text-sm font-medium ${done ? 'text-slate-500 line-through dark:text-gray-600' : 'text-slate-900 dark:text-white'}`}
+          >
+            {task.title}
+          </p>
           {task.description ? (
-            <p className="mt-1 text-xs leading-relaxed text-gray-500">{task.description}</p>
+            <p className="mt-1 text-xs leading-relaxed text-slate-600 dark:text-gray-500">{task.description}</p>
           ) : null}
-          <p className="mt-2 text-xs text-gray-600">{metaLine(task)}</p>
+          <p className="mt-2 text-xs text-slate-500 dark:text-gray-600">{metaLine(task)}</p>
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <AiBadge task={task} />
           </div>
@@ -52,7 +56,7 @@ const TaskCard = ({ task, onToggleComplete, onDelete }) => {
       <button
         type="button"
         onClick={() => onDelete(task)}
-        className="shrink-0 text-xs text-gray-600 opacity-0 transition-all hover:text-red-400 group-hover:opacity-100"
+        className="shrink-0 text-xs text-slate-500 opacity-0 transition-all hover:text-red-600 group-hover:opacity-100 dark:text-gray-600 dark:hover:text-red-400"
         aria-label="Delete task"
       >
         <FiTrash2 size={16} />
