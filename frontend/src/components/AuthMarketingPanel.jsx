@@ -51,7 +51,7 @@ const AuthMarketingPanel = () => {
       </div>
 
       <p className="mt-12 text-xs text-slate-500 dark:text-gray-600 lg:mt-0">
-        &copy; {new Date().getFullYear()} Task Manager. All rights reserved.
+        &copy; {new Date().getFullYear()} Task Manager made by Zayn. All rights reserved.
       </p>
     </div>
   );

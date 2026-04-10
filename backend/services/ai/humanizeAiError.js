@@ -58,6 +58,14 @@ function looksLikeModelFailure(t) {
   );
 }
 
+function looksLikeRateLimitOrQuota(t) {
+  if (/\b429\b/.test(t)) return true;
+  if (/resource_exhausted|resource exhausted/i.test(t)) return true;
+  if (/\brate[\s_-]?limit|rate_limit_error|too many requests|over capacity|requests per/i.test(t)) return true;
+  if (/\bquota\b|quota_exceeded|exceeded your quota|billing_hard|limit exceeded/i.test(t)) return true;
+  return false;
+}
+
 function humanizeAiFailure(error) {
   const { name, envVar, modelVar } = providerLabel(error);
   const raw = flattenErrorText(error);
@@ -71,7 +79,7 @@ function humanizeAiFailure(error) {
     return `(AI paused: ${name} rejected the model name—update ${modelVar} to a current model ID.)`;
   }
 
-  if (t.includes('429') || t.includes('quota') || t.includes('resource_exhausted') || t.includes('rate limit')) {
+  if (looksLikeRateLimitOrQuota(t)) {
     return '(AI paused: API quota or rate limit—check your provider dashboard.)';
   }
 

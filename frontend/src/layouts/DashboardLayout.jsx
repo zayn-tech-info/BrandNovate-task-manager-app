@@ -59,20 +59,20 @@ const DashboardLayout = () => {
   return (
     <div className="flex h-screen bg-slate-100 dark:bg-[#0d0f14]">
       <aside
-        className={`fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-slate-200 bg-white transition-all duration-300 ease-in-out dark:border-white/5 dark:bg-[#0a0b0f] lg:static lg:inset-0 lg:flex ${
+        className={`fixed inset-y-0 left-0 z-30 hidden h-full w-64 flex-col border-r border-slate-200 bg-white transition-all duration-300 ease-in-out dark:border-white/5 dark:bg-[#0a0b0f] lg:static lg:inset-0 lg:flex lg:h-screen ${
           isSidebarOpen
             ? 'translate-x-0 lg:w-64 lg:shrink-0'
             : '-translate-x-full lg:pointer-events-none lg:w-0 lg:min-w-0 lg:translate-x-0 lg:overflow-hidden lg:border-r-0'
         }`}
       >
-        <div className="flex h-16 items-center justify-center border-b border-slate-200 px-3 dark:border-white/5">
+        <div className="flex h-16 shrink-0 items-center justify-center border-b border-slate-200 px-3 dark:border-white/5">
           <Link to="/tasks" className="flex items-center gap-2.5 text-lg font-semibold text-slate-900 dark:text-white">
             <TaskFlowLogoMark />
             Taskify
           </Link>
         </div>
-        <div className="flex flex-grow flex-col overflow-y-auto p-4">
-          <nav className="flex-1 space-y-2">
+        <div className="flex min-h-0 flex-1 flex-col p-4">
+          <nav className="min-h-0 flex-1 space-y-2 overflow-y-auto">
             {navItems.map((item) => (
               <Link
                 key={item.path}
@@ -84,7 +84,7 @@ const DashboardLayout = () => {
               </Link>
             ))}
           </nav>
-          <div className="mt-auto">
+          <div className="mt-auto shrink-0 border-t border-slate-200 pt-4 dark:border-white/5">
             <button
               onClick={handleLogout}
               className="flex w-full items-center rounded-lg px-4 py-3 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-gray-500 dark:hover:bg-white/4 dark:hover:text-gray-300"
@@ -97,11 +97,11 @@ const DashboardLayout = () => {
       </aside>
 
       <aside
-        className={`fixed inset-y-0 left-0 z-30 w-64 transform border-r border-slate-200 bg-white transition-transform duration-300 ease-in-out dark:border-white/5 dark:bg-[#0a0b0f] lg:hidden ${
+        className={`fixed inset-y-0 left-0 z-30 flex h-full w-64 flex-col transform border-r border-slate-200 bg-white transition-transform duration-300 ease-in-out dark:border-white/5 dark:bg-[#0a0b0f] lg:hidden ${
           isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="flex h-16 items-center justify-between border-b border-slate-200 px-4 dark:border-white/5">
+        <div className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 px-4 dark:border-white/5">
           <Link to="/tasks" className="flex items-center gap-2.5 text-lg font-semibold text-slate-900 dark:text-white">
             <TaskFlowLogoMark />
             Taskify
@@ -113,8 +113,8 @@ const DashboardLayout = () => {
             <FiX size={24} />
           </button>
         </div>
-        <div className="flex flex-grow flex-col overflow-y-auto p-4">
-          <nav className="flex-1 space-y-2">
+        <div className="flex min-h-0 flex-1 flex-col p-4">
+          <nav className="min-h-0 flex-1 space-y-2 overflow-y-auto">
             {navItems.map((item) => (
               <Link
                 key={item.path}
@@ -127,7 +127,7 @@ const DashboardLayout = () => {
               </Link>
             ))}
           </nav>
-          <div className="mt-auto">
+          <div className="mt-auto shrink-0 border-t border-slate-200 pt-4 dark:border-white/5">
             <button
               onClick={handleLogout}
               className="flex w-full items-center rounded-lg px-4 py-3 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-gray-500 dark:hover:bg-white/4 dark:hover:text-gray-300"
@@ -183,7 +183,7 @@ const DashboardLayout = () => {
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto bg-slate-50 px-6 py-4 dark:bg-[#0d0f14]">
+        <main className="flex-1 overflow-y-auto bg-slate-50 px-4 py-4 sm:px-6 dark:bg-[#0d0f14]">
           <Outlet />
         </main>
       </div>

@@ -10,13 +10,13 @@ const FilterBar = ({
   setHideCompleted,
 }) => {
   return (
-    <div className="mb-8 flex flex-col gap-5 border-b border-slate-200 pb-6 pt-1 dark:border-white/[0.06] md:flex-row md:items-center md:justify-between">
-      <div className="flex flex-wrap gap-1.5">
+    <div className="mb-4 flex flex-col gap-3 border-b border-slate-200 pb-4 pt-1 dark:border-white/[0.06] lg:mb-8 lg:gap-5 lg:pb-6 md:flex-row md:items-center md:justify-between">
+      <div className="-mx-1 flex flex-nowrap gap-1.5 overflow-x-auto px-1 pb-0.5 lg:mx-0 lg:flex-wrap lg:overflow-visible lg:pb-0">
         {['all', 'high', 'medium', 'low'].map((priority) => (
           <button
             key={priority}
             type="button"
-            className={`cursor-pointer rounded-xl px-3.5 py-2 text-xs transition-all duration-150 ${priorityFilter === priority
+            className={`shrink-0 cursor-pointer rounded-xl px-3.5 py-2 text-xs transition-all duration-150 ${priorityFilter === priority
                 ? 'border border-slate-300 bg-slate-100 font-medium text-slate-900 ring-1 ring-inset ring-slate-200 dark:border-white/10 dark:bg-white/[0.08] dark:text-white dark:ring-white/[0.06]'
                 : 'border border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 dark:border-white/5 dark:text-gray-500 dark:hover:border-white/[0.12] dark:hover:bg-white/[0.03] dark:hover:text-gray-300'
               }`}
@@ -27,8 +27,8 @@ const FilterBar = ({
         ))}
       </div>
 
-      <div className="flex flex-wrap items-center gap-5 md:gap-6">
-        <div className="flex items-center gap-2.5">
+      <div className="flex flex-wrap items-center justify-between gap-2 sm:justify-start md:gap-6 lg:gap-6">
+        <div className="flex min-w-0 items-center gap-2">
           <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-gray-500">Sort</span>
           <div className="relative">
             <select

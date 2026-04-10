@@ -260,22 +260,37 @@ const buildRulesTaskDraft = ({
   due.setDate(due.getDate() + (defaultPriority === 'high' || overdueTasks.length ? 1 : 2));
   due.setHours(12, 0, 0, 0);
 
-  const aiNote = reason || '';
+  const aiNote = String(reason || '').trim();
 
   if (normalizedPrompt.length >= 2) {
-    const title = pickUniqueTitle(
-      normalizedPrompt.length > 100 ? `${normalizedPrompt.slice(0, 97)}...` : normalizedPrompt
-    );
+    if (!aiNote) {
+      const title = pickUniqueTitle(
+        normalizedPrompt.length > 100 ? `${normalizedPrompt.slice(0, 97)}...` : normalizedPrompt
+      );
+      return {
+        title,
+        description: `Turn this into a concrete outcome: write the first deliverable, estimate time, and define "done".${formDesc ? ` Optional context from your draft: ${formDesc.slice(0, 200)}` : ''}`,
+        priority: overdueTasks.length ? 'high' : defaultPriority,
+        status,
+        category,
+        dueDate: due.toISOString(),
+        reason: 'Suggestion from your instruction.',
+        generatedAt: new Date().toISOString(),
+        source: 'rules'
+      };
+    }
+
+    const promptSnippet =
+      normalizedPrompt.length > 320 ? `${normalizedPrompt.slice(0, 317)}…` : normalizedPrompt;
+    const title = pickUniqueTitle('Offline draft — refine from your idea');
     return {
       title,
-      description: `Turn this into a concrete outcome: write the first deliverable, estimate time, and define "done".${formDesc ? ` Optional context from your draft: ${formDesc.slice(0, 200)}` : ''}`,
+      description: `No model draft was returned. Shape your idea into a task:\n\n"${promptSnippet}"\n\nTurn this into a concrete outcome: write the first deliverable, estimate time, and define "done".${formDesc ? `\n\nOptional context from your draft: ${formDesc.slice(0, 200)}` : ''}`,
       priority: overdueTasks.length ? 'high' : defaultPriority,
       status,
       category,
       dueDate: due.toISOString(),
-      reason: aiNote
-        ? `Suggestion from your instruction. ${aiNote}`
-        : 'Suggestion from your instruction.',
+      reason: aiNote,
       generatedAt: new Date().toISOString(),
       source: 'rules'
     };

@@ -303,17 +303,19 @@ const Tasks = () => {
   };
 
   return (
-    <div className="mx-auto w-full max-w-6xl space-y-6 py-2">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div className="mx-auto w-full max-w-6xl space-y-4 py-2 lg:space-y-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">Tasks</h1>
-          <p className="mt-1 text-sm text-slate-600 dark:text-gray-500">Track and complete work in one place.</p>
+          <h1 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white lg:text-xl">Tasks</h1>
+          <p className="mt-0.5 text-xs text-slate-600 dark:text-gray-500 sm:mt-1 sm:text-sm">
+            Track and complete work in one place.
+          </p>
         </div>
         <button
           type="button"
           onClick={handleOpenCreate}
           disabled={isSubmitting}
-          className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-blue-500 active:scale-[0.98] disabled:opacity-50 sm:mt-0"
+          className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-blue-500 active:scale-[0.98] disabled:opacity-50 sm:mt-0 sm:w-auto"
         >
           <FiPlus className="h-4 w-4" />
           New task
@@ -358,7 +360,7 @@ const Tasks = () => {
       {isLoading ? (
         <TasksPageSkeleton />
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-4 lg:space-y-6">
           {todayTasks.length ? (
             <TaskList
               title={`Today (${todayTasks.length})`}
