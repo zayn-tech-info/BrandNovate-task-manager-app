@@ -8,10 +8,30 @@ const insightsRoutes = require('./routes/insights.routes');
 
 const app = express();
 
+const devBrowserOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173'];
+
+const allowedCorsOrigins = () => {
+  const fromEnv = String(process.env.CORS_ORIGIN || '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const base = fromEnv.length ? fromEnv : ['http://localhost:5173'];
+  return [...new Set([...base, ...devBrowserOrigins])];
+};
+
 app.use(helmet());
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:5173'
+    origin: (origin, callback) => {
+      const allowed = allowedCorsOrigins();
+      if (!origin) {
+        return callback(null, true);
+      }
+      if (allowed.includes(origin)) {
+        return callback(null, origin);
+      }
+      callback(null, false);
+    }
   })
 );
 app.use(morgan('dev'));

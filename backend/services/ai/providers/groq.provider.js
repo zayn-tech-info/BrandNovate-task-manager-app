@@ -40,8 +40,13 @@ const groqFetch = async (body) => {
     }
 
     if (!res.ok) {
-      const msg = data?.error?.message || data?.message || rawText || res.statusText;
-      throw new Error(typeof msg === 'string' ? msg : JSON.stringify(data?.error || data));
+      const groqErr = data?.error;
+      const msg = groqErr?.message || data?.message || rawText || res.statusText;
+      const err = new Error(typeof msg === 'string' ? msg : JSON.stringify(groqErr || data));
+      err.statusCode = res.status;
+      if (groqErr?.code != null) err.providerCode = String(groqErr.code);
+      if (groqErr?.type != null) err.providerType = String(groqErr.type);
+      throw err;
     }
 
     return data;

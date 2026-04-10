@@ -3,6 +3,14 @@ const { generateGroqInsights, generateGroqTaskDraft } = require('./providers/gro
 const { buildRulesInsights, buildRulesTaskDraft } = require('./providers/rules.provider');
 const { humanizeAiFailure } = require('./humanizeAiError');
 
+const explicitAiProviderRaw = () => String(process.env.AI_PROVIDER || '').trim().toLowerCase();
+
+/** When AI_PROVIDER is explicitly groq or gemini, run only that provider so errors/logs match the chosen backend. */
+const allowSecondaryProviderFallback = () => {
+  const e = explicitAiProviderRaw();
+  return e !== 'groq' && e !== 'gemini';
+};
+
 const getOverviewSnapshot = (tasks) => {
   const safeTasks = Array.isArray(tasks) ? tasks : [];
   const now = new Date();
@@ -40,9 +48,7 @@ const getOverviewSnapshot = (tasks) => {
 };
 
 const resolvePrimaryProvider = () => {
-  const explicit = String(process.env.AI_PROVIDER || '')
-    .trim()
-    .toLowerCase();
+  const explicit = explicitAiProviderRaw();
   if (explicit === 'groq') return 'groq';
   if (explicit === 'gemini') return 'gemini';
   if (explicit === 'rules') return null;
@@ -58,6 +64,7 @@ const resolvePrimaryProvider = () => {
 };
 
 const secondaryProvider = (primary) => {
+  if (!allowSecondaryProviderFallback()) return null;
   if (primary === 'groq' && String(process.env.GEMINI_API_KEY || '').trim()) return 'gemini';
   if (primary === 'gemini' && String(process.env.GROQ_API_KEY || '').trim()) return 'groq';
   return null;
@@ -67,6 +74,11 @@ const tagProviderError = (err, provider) => {
   const wrapped = new Error(err?.message || String(err));
   wrapped.aiProvider = provider;
   wrapped.cause = err;
+  for (const key of ['statusCode', 'providerCode', 'providerType']) {
+    if (err && err[key] != null) {
+      wrapped[key] = err[key];
+    }
+  }
   return wrapped;
 };
 

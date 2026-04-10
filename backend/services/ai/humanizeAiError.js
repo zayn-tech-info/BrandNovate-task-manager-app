@@ -58,11 +58,20 @@ function looksLikeModelFailure(t) {
   );
 }
 
-function looksLikeRateLimitOrQuota(t) {
-  if (/\b429\b/.test(t)) return true;
+function looksLikeRateLimitOrQuota(t, error) {
+  if (error?.statusCode === 429) return true;
+  const code = String(error?.providerCode || '').toLowerCase();
+  if (code && /rate_limit|too_many_requests/i.test(code)) return true;
+  const typ = String(error?.providerType || '').toLowerCase();
+  if (typ && /rate_limit/i.test(typ)) return true;
+
   if (/resource_exhausted|resource exhausted/i.test(t)) return true;
-  if (/\brate[\s_-]?limit|rate_limit_error|too many requests|over capacity|requests per/i.test(t)) return true;
-  if (/\bquota\b|quota_exceeded|exceeded your quota|billing_hard|limit exceeded/i.test(t)) return true;
+  if (/\b429\b/.test(t)) return true;
+  if (/\brate[\s_-]?limit|rate_limit_error|too many requests|over capacity/i.test(t)) return true;
+  if (/requests?\s+per|tokens?\s+per|\btpm\b|\brpm\b|quota_exceeded|exceeded your quota|billing_hard/i.test(t)) {
+    return true;
+  }
+  if (/\bquota\b/i.test(t) && /(exceed|exhausted|rate|limit)/i.test(t)) return true;
   return false;
 }
 
@@ -79,7 +88,7 @@ function humanizeAiFailure(error) {
     return `(AI paused: ${name} rejected the model name—update ${modelVar} to a current model ID.)`;
   }
 
-  if (looksLikeRateLimitOrQuota(t)) {
+  if (looksLikeRateLimitOrQuota(t, error)) {
     return '(AI paused: API quota or rate limit—check your provider dashboard.)';
   }
 
